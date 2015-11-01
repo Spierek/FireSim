@@ -5,7 +5,16 @@ public class Cell : MonoBehaviour {
 	#region Variables
 	public int			x;
 	public int			y;
-	public CellMaterial cellMaterial;
+
+	[Header("Cell Properties")]
+	public CellMaterial materialType;
+	[Range(0, 2000)]
+	public float		currentTemperature;
+	public float		materialMass;
+	public float		cellSize;
+
+	// preset values
+	private Vector2		materialMassRange = new Vector2(1, 100);
 	#endregion
 
 	#region Monobehaviour
@@ -19,13 +28,12 @@ public class Cell : MonoBehaviour {
 	#endregion
 
 	#region Methods
-	public void Setup(int x, int y) {
+	public void Setup(int x, int y, float size) {
 		this.x = x;
 		this.y = y;
+		cellSize = size;
 
 		gameObject.name = "Cell(" + x + "," + y + ")";
-
-		//TODO: randomize material, setup visuals
 	}
 
 	public void SetMaterial(GameObject prefab) {
@@ -33,7 +41,9 @@ public class Cell : MonoBehaviour {
 		go.transform.parent = transform;
 		go.transform.localPosition = new Vector3(0, 0.1f, 0);
 
-		cellMaterial = go.GetComponent<CellMaterial>();
+		materialType = go.GetComponent<CellMaterial>();
+		materialMass = Random.Range(materialMassRange.x, materialMassRange.y);
+
 	}
 	#endregion
 }
