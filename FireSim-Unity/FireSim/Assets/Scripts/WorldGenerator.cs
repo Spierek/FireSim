@@ -4,7 +4,9 @@ using System.Collections.Generic;
 
 public class WorldGenerator : MonoBehaviour {
 	#region Variables
-	public GameObject	cellPrefab;
+	[Header("Prefabs")]
+	public GameObject			cellPrefab;
+	public List<GameObject>		materialPrefabs = new List<GameObject>();
 
 	[Header("World Params")]
 	public int			sizeX;
@@ -40,6 +42,7 @@ public class WorldGenerator : MonoBehaviour {
 				go.transform.localPosition = new Vector3(x - sizeX / 2 + 1, Random.Range(-yOffsetJitter, yOffsetJitter), -(y - sizeY / 2 + 1));
 
 				cell.Setup(x, y);
+				cell.SetMaterial(materialPrefabs[Random.Range(0, materialPrefabs.Count)]);
 				cells[y].Add(cell);
 			}
 		}
