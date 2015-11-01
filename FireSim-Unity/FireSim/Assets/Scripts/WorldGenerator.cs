@@ -42,7 +42,7 @@ public class WorldGenerator : MonoBehaviour {
 				go.transform.localPosition = new Vector3(x - sizeX / 2 + 1, Random.Range(-yOffsetJitter, yOffsetJitter), -(y - sizeY / 2 + 1));
 
 				cell.Setup(x, y);
-				cell.SetMaterial(materialPrefabs[Random.Range(0, materialPrefabs.Count)]);
+				cell.SetMaterial(materialPrefabs[Random.Range(0, materialPrefabs.Count)]);		// TODO: would be nice to have a percentage-based material type setup? (some stuff is placed rarely)
 				cells[y].Add(cell);
 			}
 		}

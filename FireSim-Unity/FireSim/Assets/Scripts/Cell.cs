@@ -31,7 +31,7 @@ public class Cell : MonoBehaviour {
 	public void SetMaterial(GameObject prefab) {
 		GameObject go = Instantiate(prefab);
 		go.transform.parent = transform;
-		go.transform.localPosition = Vector3.zero;
+		go.transform.localPosition = new Vector3(0, 0.1f, 0);
 
 		cellMaterial = go.GetComponent<CellMaterial>();
 	}
