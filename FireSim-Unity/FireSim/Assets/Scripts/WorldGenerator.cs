@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class WorldGenerator : MonoBehaviour {
@@ -9,6 +8,7 @@ public class WorldGenerator : MonoBehaviour {
 	public List<GameObject>		materialPrefabs = new List<GameObject>();
 
 	[Header("World Params")]
+	public int			currentSeed = 12345;
 	public int			sizeX;
 	public int			sizeY;
 	public float		yOffsetJitter = 0.1f;
@@ -30,7 +30,7 @@ public class WorldGenerator : MonoBehaviour {
 	}
 	
 	void Update () {
-	
+
 	}
 	#endregion
 
@@ -38,19 +38,31 @@ public class WorldGenerator : MonoBehaviour {
 	private void Generate() {
 		GameObject go;
 		Cell cell;
+		System.Random rand;
+		WangDoubleHash hashObject = new WangDoubleHash(currentSeed);
+		float height;
 
 		for (int y = 0; y < sizeY; ++y) {
 			cells.Add(new List<Cell>());
 
 			for (int x = 0; x < sizeX; ++x) {
+				// get seed for current cell
+				int cellSeed = (int)hashObject.GetHash(x, y);
+				rand = new System.Random(cellSeed);
+
+				// spawn world cell
 				go = Instantiate(cellPrefab);
 				cell = go.GetComponent<Cell>();
 
 				go.transform.parent = transform;
-				go.transform.localPosition = new Vector3(x - sizeX / 2 + 1, Random.Range(-yOffsetJitter, yOffsetJitter), -(y - sizeY / 2 + 1));
+				height = (rand.Next(0, (int)(yOffsetJitter * 100)) + 50) / 100f;
+				go.transform.localPosition = new Vector3(x - sizeX / 2 + 1, height, -(y - sizeY / 2 + 1));
 
+				// setup cell
 				cell.Setup(x, y, cellSize);
-				cell.SetMaterial(materialPrefabs[Random.Range(0, materialPrefabs.Count)]);		// TODO: would be nice to have a percentage-based material type setup? (some stuff is placed rarely)
+				cell.SetMaterial(materialPrefabs[rand.Next(0, materialPrefabs.Count)]);		// TODO: would be nice to have a percentage-based material type setup? (some stuff is placed rarely)
+				cell.SetValues(rand);
+
 				cells[y].Add(cell);
 			}
 		}
