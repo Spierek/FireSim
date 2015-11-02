@@ -28,10 +28,10 @@ public class WorldGenerator : MonoBehaviour {
 	public float		cellSize = 1;
 	[Range(globalTemperature_min, globalTemperature_max)]
 	public float		globalTemperature = 20.0f;
-	[Range(windSpeed_min, windSpeed_max)]
-	public float		windSpeed = 10.0f;
 	[Range(windDirection_min, windDirection_max)]
 	public float		windDirection = 0.0f;
+	[Range(windSpeed_min, windSpeed_max)]
+	public float		windSpeed = 10.0f;
 
 	public List<List<Cell>> cells = new List<List<Cell>>();
 	#endregion

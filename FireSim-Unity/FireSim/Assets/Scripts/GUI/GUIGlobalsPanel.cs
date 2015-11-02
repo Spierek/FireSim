@@ -9,10 +9,11 @@ public class GUIGlobalsPanel : MonoBehaviour
 	[SerializeField]
 	private WorldGenerator _currentWorldGenerator = null;
 
-
 	private float _currentWorldTemperatureSliderValue = 0.0f;
 	private float _currentWindDirectionSliderValue = 0.0f;
 	private float _currentWindSpeedSliderValue = 0.0f;
+
+	private const string _arrowMaterialColor = "_Color";
 
 	[Header("GUI objects")]
 	
@@ -31,12 +32,27 @@ public class GUIGlobalsPanel : MonoBehaviour
 	[SerializeField]
 	private Text _worldWindSpeedLabel = null;
 
+	[SerializeField]
+	private GameObject _windDirectionArrowGO = null;
+	[SerializeField]
+	private MeshRenderer _windDirectionArrowMeshRenderer = null;
+
+	private float _windDirectionArrowMaxAlpha = 0.4f;
+	private float _windDirectionArrowTimeToFadeOut = 1.0f;
+	private float _windDirectionArrowTimer = 0.0f;
+
+	private float _lastRealTime = 0.0f;
+	private float _realDeltaTime = 0.0f;
+
 	#endregion Variables
 
 	#region Monobehaviour Methods
 
 	void Start () 
 	{
+		this._lastRealTime = Time.realtimeSinceStartup;
+		this._windDirectionArrowTimer = this._windDirectionArrowTimeToFadeOut;
+
 		if(this._currentWorldGenerator == null)
 		{
 			this._currentWorldGenerator = GameObject.FindObjectOfType<WorldGenerator>();
@@ -81,8 +97,10 @@ public class GUIGlobalsPanel : MonoBehaviour
 	}
 	void Update () 
 	{
+		this.ProcesReadDeltaTime();
 		this.ProcesWorldTemperature();
 		this.ProcesWind();
+		this.ProcesWindDirectionArrow();
 	}
 
 	#endregion MonobehaviourMethods
@@ -114,6 +132,9 @@ public class GUIGlobalsPanel : MonoBehaviour
 			float worldWindDirectionSliderTmpValue = this._worldWindDirectionSlider.value;
 			if (worldWindDirectionSliderTmpValue != this._currentWindDirectionSliderValue)
 			{
+				//show wind arrow
+				this._windDirectionArrowTimer = 0.0f;
+
 				this._currentWindDirectionSliderValue = worldWindDirectionSliderTmpValue;
 				float windDirection = Mathf.Lerp(WorldGenerator.windDirection_min, WorldGenerator.windDirection_max, worldWindDirectionSliderTmpValue);
 				this._currentWorldGenerator.windDirection = windDirection;
@@ -136,6 +157,40 @@ public class GUIGlobalsPanel : MonoBehaviour
 				{
 					this._worldWindSpeedLabel.text = windSpeed.ToString();
 				}
+			}
+		}
+	}
+
+	private void ProcesReadDeltaTime()
+	{
+		float tmpRealTime = Time.realtimeSinceStartup;
+		this._realDeltaTime = tmpRealTime - this._lastRealTime;
+		this._lastRealTime = tmpRealTime;
+	}
+
+	private void ProcesWindDirectionArrow()
+	{
+		if(this._windDirectionArrowGO != null && this._windDirectionArrowMeshRenderer != null)
+		{
+			this._windDirectionArrowTimer += Time.deltaTime;
+			if(this._windDirectionArrowTimer < this._windDirectionArrowTimeToFadeOut)
+			{
+				if (!this._windDirectionArrowGO.activeSelf) this._windDirectionArrowGO.SetActive(true);
+
+				Material arrowMaterial = this._windDirectionArrowMeshRenderer.material;
+
+				float alpha = Mathf.Lerp(this._windDirectionArrowMaxAlpha, 0.0f, this._windDirectionArrowTimer / this._windDirectionArrowTimeToFadeOut);
+				Color arrowColor = arrowMaterial.GetColor(_arrowMaterialColor);
+				arrowColor.a = alpha;
+				arrowMaterial.SetColor(_arrowMaterialColor, arrowColor);
+
+				Quaternion arrowQuat = this._windDirectionArrowGO.transform.localRotation;
+				Vector3 arrowRot = arrowQuat.eulerAngles;
+				arrowRot.y = this._currentWorldGenerator.windDirection;
+				arrowQuat.eulerAngles = arrowRot;
+				this._windDirectionArrowGO.transform.localRotation = arrowQuat;
+			}else{
+				if (this._windDirectionArrowGO.activeSelf) this._windDirectionArrowGO.SetActive(false);
 			}
 		}
 	}
