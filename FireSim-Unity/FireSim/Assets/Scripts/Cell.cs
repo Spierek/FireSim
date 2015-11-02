@@ -37,12 +37,17 @@ public class Cell : MonoBehaviour {
 	}
 
 	public void SetMaterial(GameObject prefab) {
+		// spawn material prefab (visualization + values)
 		GameObject go = Instantiate(prefab);
 		go.transform.parent = transform;
 		go.transform.localPosition = new Vector3(0, 0.1f, 0);
 
 		materialType = go.GetComponent<CellMaterial>();
-		materialMass = Random.Range(materialMassRange.x, materialMassRange.y);
+	}
+
+	// uses a seeded random instance for deterministic generation
+	public void SetValues(System.Random rand) {
+		materialMass = rand.Next((int)materialMassRange.x, (int)materialMassRange.y * 100) / 100f;
 
 	}
 	#endregion
