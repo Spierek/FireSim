@@ -3,6 +3,18 @@ using System.Collections.Generic;
 
 public class WorldGenerator : MonoBehaviour {
 	#region Variables
+
+	//const to be used with edge conditions
+	
+	public const float globalTemperature_min = -40.0f;
+	public const float globalTemperature_max = 40.0f;
+
+	public const float windDirection_min = 0.0f;
+	public const float windDirection_max = 360.0f;
+
+	public const float windSpeed_min = 0.0f;
+	public const float windSpeed_max = 30.0f;
+
 	[Header("Prefabs")]
 	public GameObject			cellPrefab;
 	public List<GameObject>		materialPrefabs = new List<GameObject>();
@@ -14,12 +26,12 @@ public class WorldGenerator : MonoBehaviour {
 	public float		yOffsetJitter = 0.1f;
 	[Range(1, 10)]
 	public float		cellSize = 1;
-	[Range(-40, 40)]
-	public float		globalTemperature = 20;
-	[Range(0, 30)]
-	public float		airHumidity = 10;
-	[Range(0, 30)]
-	public float		windSpeed = 10;
+	[Range(globalTemperature_min, globalTemperature_max)]
+	public float		globalTemperature = 20.0f;
+	[Range(windDirection_min, windDirection_max)]
+	public float		windDirection = 0.0f;
+	[Range(windSpeed_min, windSpeed_max)]
+	public float		windSpeed = 10.0f;
 
 	public List<List<Cell>> cells = new List<List<Cell>>();
 	#endregion
