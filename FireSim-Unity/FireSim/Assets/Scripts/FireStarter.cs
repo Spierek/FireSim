@@ -39,6 +39,7 @@ public class FireStarter : MonoBehaviour
 				RaycastHit rayHit = new RaycastHit();
 				if (Physics.Raycast(mouseRay, out rayHit))
 				{
+
 					Vector3 rot = Vector3.zero;
 					rot.x = 270.0f;
 					Quaternion quat = Quaternion.identity;
@@ -46,6 +47,12 @@ public class FireStarter : MonoBehaviour
 
 					GameObject go = (GameObject)GameObject.Instantiate(this._thunder, rayHit.point, quat);
 					GameObject.Destroy(go, 1.5f);
+
+					Cell tmpCell = rayHit.collider.GetComponent<Cell>();
+					if(tmpCell != null)
+					{
+						tmpCell.Ignite();
+					}
 				}
 			}
 			this._wasThunderShot = true;
