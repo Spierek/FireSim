@@ -132,7 +132,7 @@ public class OrbitCamera : MonoBehaviour
 		// mousewheel deadZone
 		float deadZone = 0.01f; 
  
-		if (Input.GetMouseButton(0))
+		if (Input.GetMouseButton(1))
 		{
 		   mouseX += Input.GetAxis("Mouse X") * X_MouseSensitivity;
 		   mouseY -= Input.GetAxis("Mouse Y") * Y_MouseSensitivity;
