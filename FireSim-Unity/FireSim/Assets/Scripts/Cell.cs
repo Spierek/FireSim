@@ -14,16 +14,19 @@ public class Cell : MonoBehaviour {
 	public float		cellSize;
 
 	// preset values
-	private Vector2		materialMassRange = new Vector2(1, 100);
+	private Vector2			materialMassRange = new Vector2(1, 100);
+	private ParticleSystem	fireParticles;
 	#endregion
 
 	#region Monobehaviour
-	void Start () {
-	
+	void Awake () {
+		fireParticles = transform.Find("FireParticles").GetComponent<ParticleSystem>();
 	}
 	
 	void Update () {
-	
+		if (Input.GetKeyDown(KeyCode.A)) {
+			Ignite();
+		}								  
 	}
 	#endregion
 
@@ -48,7 +51,11 @@ public class Cell : MonoBehaviour {
 	// uses a seeded random instance for deterministic generation
 	public void SetValues(System.Random rand) {
 		materialMass = rand.Next((int)materialMassRange.x, (int)materialMassRange.y * 100) / 100f;
+	}
 
+	public void Ignite() {
+		currentTemperature = materialType.ignitionTemperature;
+		fireParticles.Play();
 	}
 	#endregion
 }
