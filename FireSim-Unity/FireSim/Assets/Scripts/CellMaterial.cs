@@ -5,7 +5,7 @@ using System.Collections;
 public class CellMaterial : MonoBehaviour {
 	#region Variables
 	[Range(100, 2000)]
-	public float combustionTemperature;
+	public float ignitionTemperature;
 	[Range(5, 20)]
 	public float fuelEnergy;
 	[Range(0.05f, 5)]
