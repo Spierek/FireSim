@@ -150,7 +150,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 			float worldWindSpeedSliderTmpValue = this._worldWindSpeedSlider.value;
 			if (worldWindSpeedSliderTmpValue != this._currentWindSpeedSliderValue)
 			{
-				this._currentWindDirectionSliderValue = worldWindSpeedSliderTmpValue;
+				this._currentWindSpeedSliderValue = worldWindSpeedSliderTmpValue;
 				float windSpeed = Mathf.Lerp(WorldGenerator.windSpeed_min, WorldGenerator.windSpeed_max, worldWindSpeedSliderTmpValue);
 				this._currentWorldGenerator.windSpeed = windSpeed;
 				if (this._worldWindSpeedLabel != null)
