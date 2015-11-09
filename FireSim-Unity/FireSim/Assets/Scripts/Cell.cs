@@ -13,9 +13,14 @@ public class Cell : MonoBehaviour {
 	public float		materialMass;
 	public float		cellSize;
 
+
+	private bool		materialSet = false;
 	// preset values
 	private Vector2			materialMassRange = new Vector2(1, 100);
 	private ParticleSystem	fireParticles;
+
+	private Color		temperatureColorA = new Color(0, 0, 1, 0.3f);
+	private Color		temperatureColorB = new Color(1, 0.4f, 0.4f, 0.8f);
 	#endregion
 
 	#region Monobehaviour
@@ -27,6 +32,13 @@ public class Cell : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.A)) {
 			Ignite();
 		}								  
+	}
+
+	void OnDrawGizmos() {
+		if (WorldGenerator.Instance.drawTemperatureGizmos && materialSet) {
+			Gizmos.color = Color.Lerp(temperatureColorA, temperatureColorB, Mathf.Clamp01(currentTemperature / materialType.ignitionTemperature));
+			Gizmos.DrawCube(transform.position + transform.up * 0.4f, Vector3.one * 0.9f);
+		}
 	}
 	#endregion
 
@@ -46,6 +58,7 @@ public class Cell : MonoBehaviour {
 		go.transform.localPosition = new Vector3(0, 0.1f, 0);
 
 		materialType = go.GetComponent<CellMaterial>();
+		materialSet = true;
 	}
 
 	// uses a seeded random instance for deterministic generation

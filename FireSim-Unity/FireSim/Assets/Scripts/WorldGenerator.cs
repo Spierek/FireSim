@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class WorldGenerator : MonoBehaviour {
 	#region Variables
+	public static WorldGenerator Instance;
 
 	//const to be used with edge conditions
 	
@@ -33,11 +34,16 @@ public class WorldGenerator : MonoBehaviour {
 	[Range(windSpeed_min, windSpeed_max)]
 	public float		windSpeed = 10.0f;
 
+	[Header("Debug")]
+	public bool			drawTemperatureGizmos = false;
+
 	public List<List<Cell>> cells = new List<List<Cell>>();
 	#endregion
 
 	#region Monobehaviour
 	void Awake () {
+		Instance = this;
+
 		Generate();
 	}
 	
@@ -78,6 +84,10 @@ public class WorldGenerator : MonoBehaviour {
 				cells[y].Add(cell);
 			}
 		}
+	}
+
+	public void SetTemperatureDebugGizmos(bool enabled) {
+		drawTemperatureGizmos = enabled;
 	}
 	#endregion
 }
