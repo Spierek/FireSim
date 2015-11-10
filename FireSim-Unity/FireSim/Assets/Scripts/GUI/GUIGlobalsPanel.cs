@@ -93,6 +93,12 @@ public class GUIGlobalsPanel : MonoBehaviour
 					this._worldWindSpeedLabel.text = Mathf.Lerp(WorldGenerator.windSpeed_min, WorldGenerator.windSpeed_max, windSpeedValue).ToString();
 				}
 			}
+
+			if(this._windDirectionArrowGO != null)
+			{
+				Vector3 windForward = this._windDirectionArrowGO.transform.forward;
+				this._currentWorldGenerator.UpdateWindDirection(windForward);
+			}
 		}
 	}
 	void Update () 
@@ -189,6 +195,10 @@ public class GUIGlobalsPanel : MonoBehaviour
 				arrowRot.y = this._currentWorldGenerator.windDirection;
 				arrowQuat.eulerAngles = arrowRot;
 				this._windDirectionArrowGO.transform.localRotation = arrowQuat;
+
+				Vector3 windForward = this._windDirectionArrowGO.transform.forward;
+				this._currentWorldGenerator.UpdateWindDirection(windForward);
+
 			}else{
 				if (this._windDirectionArrowGO.activeSelf) this._windDirectionArrowGO.SetActive(false);
 			}

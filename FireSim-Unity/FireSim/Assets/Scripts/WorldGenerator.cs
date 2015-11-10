@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class WorldGenerator : MonoBehaviour {
+public class WorldGenerator : MonoBehaviour 
+{
 	#region Variables
-	public static WorldGenerator Instance;
+	public static WorldGenerator _instance = null;
+	public static WorldGenerator Instance { get { return WorldGenerator._instance; } }
 
 	//const to be used with edge conditions
 	
@@ -34,36 +36,47 @@ public class WorldGenerator : MonoBehaviour {
 	[Range(windSpeed_min, windSpeed_max)]
 	public float		windSpeed = 10.0f;
 
+	private Vector3 _windDirectionVector = Vector3.zero;
+	public Vector3 WindDirectionVector { get { return this._windDirectionVector; } }
+
 	[Header("Debug")]
 	public bool			drawTemperatureGizmos = false;
 
-	public List<List<Cell>> cells = new List<List<Cell>>();
+	private List<List<Cell>> _cells = new List<List<Cell>>();
+	public List<List<Cell>> Cells { get { return this._cells; } }
+
 	#endregion
 
 	#region Monobehaviour
-	void Awake () {
-		Instance = this;
-
+	void Awake () 
+	{
+		WorldGenerator._instance = this;
 		Generate();
 	}
 	
-	void Update () {
+	void Update () 
+	{
 
 	}
+
 	#endregion
 
 	#region Methods
-	private void Generate() {
+
+	private void Generate() 
+	{
 		GameObject go;
 		Cell cell;
 		System.Random rand;
 		WangDoubleHash hashObject = new WangDoubleHash(currentSeed);
 		float height;
 
-		for (int y = 0; y < sizeY; ++y) {
-			cells.Add(new List<Cell>());
+		for (int y = 0; y < sizeY; ++y) 
+		{
+			_cells.Add(new List<Cell>());
 
-			for (int x = 0; x < sizeX; ++x) {
+			for (int x = 0; x < sizeX; ++x) 
+			{
 				// get seed for current cell
 				int cellSeed = (int)hashObject.GetHash(x, y);
 				rand = new System.Random(cellSeed);
@@ -81,13 +94,20 @@ public class WorldGenerator : MonoBehaviour {
 				cell.SetMaterial(materialPrefabs[rand.Next(0, materialPrefabs.Count)]);		// TODO: would be nice to have a percentage-based material type setup? (some stuff is placed rarely)
 				cell.SetValues(rand);
 
-				cells[y].Add(cell);
+				_cells[y].Add(cell);
 			}
 		}
 	}
 
-	public void SetTemperatureDebugGizmos(bool enabled) {
+	public void SetTemperatureDebugGizmos(bool enabled) 
+	{
 		drawTemperatureGizmos = enabled;
 	}
+
+	public void UpdateWindDirection(Vector3 newWindDirectionVector)
+	{
+		this._windDirectionVector = newWindDirectionVector;
+	}
+
 	#endregion
 }
