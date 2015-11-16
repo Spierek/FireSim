@@ -219,5 +219,15 @@ public class GUIGlobalsPanel : MonoBehaviour
 		val = Mathf.Round(val * 10) / 10f;
 		_worldWindSpeedLabel.text = val + "km/h";
 	}
+
+	public void GenerateMap()
+	{
+		WorldGenerator.Instance.Generate();
+	}
+	public void ClearMap()
+	{
+		WorldGenerator.Instance.ClearWorld();
+	}
+
 	#endregion Methods
 }

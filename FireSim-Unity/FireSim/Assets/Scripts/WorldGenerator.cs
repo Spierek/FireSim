@@ -18,6 +18,12 @@ public class WorldGenerator : MonoBehaviour
 	public const float windSpeed_min = 0.0f;
 	public const float windSpeed_max = 30.0f;
 
+	public const float windInfluenceCoefficient = 1.0f;
+
+	public const float stefan_boltzman_coefficient = 5.67f * 0.00000001f;
+
+	public const int energyTransferRadius = 2;
+
 	[Header("Prefabs")]
 	public GameObject			cellPrefab;
 	public List<GameObject>		materialPrefabs = new List<GameObject>();
@@ -45,13 +51,15 @@ public class WorldGenerator : MonoBehaviour
 	private List<List<Cell>> _cells = new List<List<Cell>>();
 	public List<List<Cell>> Cells { get { return this._cells; } }
 
+	private bool _isWorldGenerated = false;
+
 	#endregion
 
 	#region Monobehaviour
 	void Awake () 
 	{
 		WorldGenerator._instance = this;
-		Generate();
+		//Generate();
 	}
 	
 	void Update () 
@@ -63,8 +71,13 @@ public class WorldGenerator : MonoBehaviour
 
 	#region Methods
 
-	private void Generate() 
+	public void Generate() 
 	{
+		if(this._isWorldGenerated)
+		{
+			this.ClearWorld();
+		}
+
 		GameObject go;
 		Cell cell;
 		System.Random rand;
@@ -97,6 +110,23 @@ public class WorldGenerator : MonoBehaviour
 				_cells[y].Add(cell);
 			}
 		}
+		this._isWorldGenerated = true;
+	}
+
+	public void ClearWorld()
+	{
+		for(int y = 0;y < this.sizeY;++y)
+		{
+			for(int x = 0;x < this.sizeX;++x)
+			{
+				if(this._cells[y][x] != null)
+				{
+					GameObject.Destroy(this._cells[y][x].gameObject);
+				}
+			}
+			this._cells[y].Clear();
+		}
+		this._isWorldGenerated = false;
 	}
 
 	public void SetTemperatureDebugGizmos(bool enabled) 
