@@ -1,63 +1,48 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
 
-public class FireStarter : MonoBehaviour 
-{
+public class FireStarter : MonoBehaviour {
 	[SerializeField]
 	private Camera _mainCamera = null;
 
 	[SerializeField]
 	private GameObject _thunder = null;
 
-	private bool _wasThunderShot = false;
-
-	void Awake()
-	{
-		if(this._mainCamera == null)
-		{
+	void Awake() {
+		if (this._mainCamera == null) {
 			this._mainCamera = this.GetComponent<Camera>();
 		}
 	}
 
-	void Start () 
-	{
-	
-	}
-	
-	void Update () 
-	{
-		ProcesThunder();
+	void Update() {
+		if (Input.GetMouseButtonDown(0)) {
+			if(!EventSystem.current.IsPointerOverGameObject()) {
+				ProcesThunder();
+			}
+		}
 	}
 
 	private void ProcesThunder()
 	{
-		if(Input.GetMouseButton(0))
+		Ray mouseRay = this._mainCamera.ScreenPointToRay(Input.mousePosition);
+		RaycastHit rayHit = new RaycastHit();
+		if (Physics.Raycast(mouseRay, out rayHit))
 		{
-			if (!this._wasThunderShot)
+
+			Vector3 rot = Vector3.zero;
+			rot.x = 270.0f;
+			Quaternion quat = Quaternion.identity;
+			quat.eulerAngles = rot;
+
+			GameObject go = (GameObject)Instantiate(this._thunder, rayHit.point, quat);
+			Destroy(go, 1.5f);
+
+			Cell tmpCell = rayHit.collider.GetComponent<Cell>();
+			if(tmpCell != null)
 			{
-				Ray mouseRay = this._mainCamera.ScreenPointToRay(Input.mousePosition);
-				RaycastHit rayHit = new RaycastHit();
-				if (Physics.Raycast(mouseRay, out rayHit))
-				{
-
-					Vector3 rot = Vector3.zero;
-					rot.x = 270.0f;
-					Quaternion quat = Quaternion.identity;
-					quat.eulerAngles = rot;
-
-					GameObject go = (GameObject)GameObject.Instantiate(this._thunder, rayHit.point, quat);
-					GameObject.Destroy(go, 1.5f);
-
-					Cell tmpCell = rayHit.collider.GetComponent<Cell>();
-					if(tmpCell != null)
-					{
-						tmpCell.Ignite();
-					}
-				}
+				tmpCell.Ignite();
 			}
-			this._wasThunderShot = true;
-		}else{
-			this._wasThunderShot = false;
 		}
 	}
 }
