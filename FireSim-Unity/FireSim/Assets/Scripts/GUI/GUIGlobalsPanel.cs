@@ -68,7 +68,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 
 				if(this._worldTemperatureLabel != null)
 				{
-					this._worldTemperatureLabel.text = Mathf.Lerp(WorldGenerator.globalTemperature_min, WorldGenerator.globalTemperature_max, temperatureValue).ToString();
+					SetWorldTemperatureLabel(Mathf.Lerp(WorldGenerator.globalTemperature_min, WorldGenerator.globalTemperature_max, temperatureValue));
 				}
 			}
 			if (this._worldWindDirectionSlider != null)
@@ -79,7 +79,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 				
 				if (this._worldWindDirectionLabel != null)
 				{
-					this._worldWindDirectionLabel.text = Mathf.Lerp(WorldGenerator.windDirection_min, WorldGenerator.windDirection_max, windDirectionValue).ToString();
+					SetWindDirectionLabel(Mathf.Lerp(WorldGenerator.windDirection_min, WorldGenerator.windDirection_max, windDirectionValue));
 				}
 			}
 			if(this._worldWindSpeedSlider != null)
@@ -90,7 +90,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 
 				if (this._worldWindSpeedLabel != null)
 				{
-					this._worldWindSpeedLabel.text = Mathf.Lerp(WorldGenerator.windSpeed_min, WorldGenerator.windSpeed_max, windSpeedValue).ToString();
+					SetWindSpeedLabel(Mathf.Lerp(WorldGenerator.windSpeed_min, WorldGenerator.windSpeed_max, windSpeedValue));
 				}
 			}
 
@@ -125,7 +125,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 				this._currentWorldGenerator.globalTemperature = worldTemperature;
 				if (this._worldTemperatureLabel != null)
 				{
-					this._worldTemperatureLabel.text = worldTemperature.ToString();
+					SetWorldTemperatureLabel(worldTemperature);
 				}
 			}
 		}
@@ -146,7 +146,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 				this._currentWorldGenerator.windDirection = windDirection;
 				if (this._worldWindDirectionLabel != null)
 				{
-					this._worldWindDirectionLabel.text = windDirection.ToString();
+					SetWindDirectionLabel(windDirection);
 				}
 			}
 		}
@@ -161,7 +161,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 				this._currentWorldGenerator.windSpeed = windSpeed;
 				if (this._worldWindSpeedLabel != null)
 				{
-					this._worldWindSpeedLabel.text = windSpeed.ToString();
+					SetWindSpeedLabel(windSpeed);
 				}
 			}
 		}
@@ -205,5 +205,19 @@ public class GUIGlobalsPanel : MonoBehaviour
 		}
 	}
 
+	private void SetWorldTemperatureLabel(float val) {
+		val = Mathf.Round(val * 10) / 10f;
+		_worldTemperatureLabel.text = val + "°C";
+	}
+
+	private void SetWindDirectionLabel(float val) {
+		val = Mathf.Round(val * 10) / 10f;
+		_worldWindDirectionLabel.text = val + "°";
+	}
+
+	private void SetWindSpeedLabel(float val) {
+		val = Mathf.Round(val * 10) / 10f;
+		_worldWindSpeedLabel.text = val + "km/h";
+	}
 	#endregion Methods
 }
