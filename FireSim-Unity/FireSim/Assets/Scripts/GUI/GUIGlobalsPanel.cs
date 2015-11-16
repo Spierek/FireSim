@@ -44,6 +44,16 @@ public class GUIGlobalsPanel : MonoBehaviour
 	private float _lastRealTime = 0.0f;
 	private float _realDeltaTime = 0.0f;
 
+	[Header("Selectable spawn")]
+	private float toggleLocalInitialY = -20.0f;
+	private float toggleLocalOffsetY = -30.0f;
+	[SerializeField]
+	private GameObject exampleToogle = null;
+	[SerializeField]
+	private GameObject toggleParent = null;
+
+	private Toggle _selectableToggles = null;
+
 	#endregion Variables
 
 	#region Monobehaviour Methods
@@ -100,6 +110,8 @@ public class GUIGlobalsPanel : MonoBehaviour
 				this._currentWorldGenerator.UpdateWindDirection(windForward);
 			}
 		}
+
+		InitializeSelectableToggle();
 	}
 	void Update () 
 	{
@@ -220,6 +232,43 @@ public class GUIGlobalsPanel : MonoBehaviour
 		_worldWindSpeedLabel.text = val + "km/h";
 	}
 
+	private void InitializeSelectableToggle()
+	{
+		WorldGenerator instance = WorldGenerator.Instance;
+		int materialCount = instance.materialPrefabs.Count;
+		for(int i = 0;i < materialCount;++i)
+		{
+			GameObject tmpGO = (GameObject)GameObject.Instantiate(this.exampleToogle.gameObject);
+			tmpGO.SetActive(true);
+			RectTransform tmpToggleTransform = tmpGO.GetComponent<RectTransform>();
+			
+			tmpToggleTransform.SetParent(this.toggleParent.transform);
+			
+			Vector2 anchoredPosition = tmpToggleTransform.anchoredPosition;
+			anchoredPosition.y = this.toggleLocalInitialY + toggleLocalOffsetY * i;
+			anchoredPosition.x = 0.0f;
+			tmpToggleTransform.anchoredPosition = anchoredPosition;
+
+			Text tmpToggleText = tmpGO.GetComponentInChildren<Text>();
+			if(tmpToggleText != null)
+			{
+				tmpToggleText.text = instance.materialPrefabs[i].name;
+			}
+
+			Toggle tmpToggle = tmpGO.GetComponent<Toggle>();
+
+			tmpToggle.isOn = instance.selectableSpawn[i];
+
+			int index = i;
+			UnityEngine.Events.UnityAction<bool> onToggle = (bool arg) =>
+			{
+				ToggleMaterialByIndex(index, arg);
+			};
+
+			tmpToggle.onValueChanged.AddListener(onToggle);
+		}
+	}
+
 	public void GenerateMap()
 	{
 		WorldGenerator.Instance.Generate();
@@ -227,6 +276,12 @@ public class GUIGlobalsPanel : MonoBehaviour
 	public void ClearMap()
 	{
 		WorldGenerator.Instance.ClearWorld();
+	}
+
+	public void ToggleMaterialByIndex(int indexToToggle,bool state)
+	{
+		//Debug.LogFormat("Params: {0} {1}",indexToToggle,state);
+		WorldGenerator.Instance.selectableSpawn[indexToToggle] = state;
 	}
 
 	#endregion Methods

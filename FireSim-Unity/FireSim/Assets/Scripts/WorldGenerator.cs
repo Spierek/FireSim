@@ -52,6 +52,7 @@ public class WorldGenerator : MonoBehaviour
 	public List<List<Cell>> Cells { get { return this._cells; } }
 
 	private bool _isWorldGenerated = false;
+	public bool[] selectableSpawn = null;
 
 	#endregion
 
@@ -59,7 +60,15 @@ public class WorldGenerator : MonoBehaviour
 	void Awake () 
 	{
 		WorldGenerator._instance = this;
-		//Generate();
+		if( (this.selectableSpawn != null && this.selectableSpawn.Length != this.materialPrefabs.Count) || this.selectableSpawn == null )
+		{
+			int materialCount = this.materialPrefabs.Count;
+			this.selectableSpawn = new bool[materialCount];
+			for(int i = 0;i < materialCount;++i)
+			{
+				this.selectableSpawn[i] = true;
+			}
+		}
 	}
 	
 	void Update () 
@@ -77,6 +86,17 @@ public class WorldGenerator : MonoBehaviour
 		{
 			this.ClearWorld();
 		}
+
+		int materialCount = this.materialPrefabs.Count;
+		List<GameObject> selectedMaterials = new List<GameObject>();
+		for(int i = 0;i < materialCount;++i)
+		{
+			if(this.selectableSpawn[i])
+			{
+				selectedMaterials.Add(this.materialPrefabs[i]);
+			}
+		}
+		int selectedCount = selectedMaterials.Count;
 
 		GameObject go;
 		Cell cell;
@@ -104,7 +124,7 @@ public class WorldGenerator : MonoBehaviour
 
 				// setup cell
 				cell.Setup(x, y, cellSize);
-				cell.SetMaterial(materialPrefabs[rand.Next(0, materialPrefabs.Count)]);		// TODO: would be nice to have a percentage-based material type setup? (some stuff is placed rarely)
+				cell.SetMaterial(selectedMaterials[rand.Next(0, selectedCount)]);		// TODO: would be nice to have a percentage-based material type setup? (some stuff is placed rarely)
 				cell.SetValues(rand);
 
 				_cells[y].Add(cell);
