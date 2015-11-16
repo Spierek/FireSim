@@ -106,7 +106,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 
 			if(this._windDirectionArrowGO != null)
 			{
-				Vector3 windForward = this._windDirectionArrowGO.transform.forward;
+				Vector3 windForward = this._windDirectionArrowGO.transform.up; //arrow is rotated by 90 in pitch
 				this._currentWorldGenerator.UpdateWindDirection(windForward);
 			}
 		}
@@ -208,7 +208,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 				arrowQuat.eulerAngles = arrowRot;
 				this._windDirectionArrowGO.transform.localRotation = arrowQuat;
 
-				Vector3 windForward = this._windDirectionArrowGO.transform.forward;
+				Vector3 windForward = this._windDirectionArrowGO.transform.up; //arrow is rotated by 90 in pitch
 				this._currentWorldGenerator.UpdateWindDirection(windForward);
 
 			}else{

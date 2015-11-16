@@ -143,6 +143,8 @@ public class Cell : MonoBehaviour
 			float myTemperature = this.currentTemperature;
 			Vector3 myPosition = this.transform.position;
 
+			float windSpeed = WorldGenerator.Instance.windSpeed;
+
 			/* ε (Epsilon) */
 			float myEmissivity = this.materialType.emissivity;
 			Vector3 windDirection = WorldGenerator.Instance.WindDirectionVector;
@@ -175,9 +177,9 @@ public class Cell : MonoBehaviour
 
 			//calculate coeficients used to devide generated energy that needs to be radiated
 			int distance = 0;
-			for (int indexX = -energyTransferRadius; indexX < energyTransferRadius; ++indexX)
+			for (int indexY = -energyTransferRadius; indexY <= energyTransferRadius; ++indexY)
 			{
-				for (int indexY = -energyTransferRadius; indexY < energyTransferRadius; ++indexY)
+				for (int indexX = -energyTransferRadius; indexX <= energyTransferRadius; ++indexX)
 				{
 					distance = Mathf.Abs(indexX) + Mathf.Abs(indexY);
 					int positionX = myX + indexX;
@@ -193,24 +195,23 @@ public class Cell : MonoBehaviour
 								{
 									//equation 3 is used here to determin coeficients <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-									Vector3 myCellToTargetBoom = tmpCells[positionX][positionY].transform.position - myPosition;
+									Vector3 myCellToTargetBoom = tmpCells[positionY][positionX].transform.position - myPosition;
 									Vector3 myCellToTargetDirection = myCellToTargetBoom.normalized;
 
 									/* delta T */
-									float deltaTemp = Mathf.Abs(myTemperature - tmpCells[positionX][positionY].currentTemperature);
+									float deltaTemp = Mathf.Abs(myTemperature - tmpCells[positionY][positionX].currentTemperature);
 									/* W */
 									float windDirectionCoeficient = 1.0f + Vector3.Dot(windDirection, myCellToTargetDirection);
 
 									/* EQ 3 */
-									float tmpCoefficient = deltaTemp * (windInfluenceCoeficient * windDirectionCoeficient + myEmissivity * stefan_boltzman_coefficient * Mathf.Pow(deltaTemp,3));
-
+									float tmpCoefficient = deltaTemp * (windInfluenceCoeficient * windDirectionCoeficient * windSpeed + myEmissivity * stefan_boltzman_coefficient * Mathf.Pow(deltaTemp,3));
+									//Debug.LogFormat("{0} {1}", windInfluenceCoeficient * windDirectionCoeficient * windSpeed, myEmissivity * stefan_boltzman_coefficient * Mathf.Pow(deltaTemp, 3));
 									//Debug.LogFormat("myPositionX: {0} myPositionY: {1} indexX: {2} indexY: {3} positionX: {4} positionY: {5}",myX,myY,indexX,indexY,positionX,positionY);
 									//Debug.LogFormat("arraySize: {0} secondSize: {1}", positionCoefitients.Length, positionCoefitients[0].Length);
 									//Debug.LogFormat("check {0} {1}", energyTransferRadius + indexX, energyTransferRadius + indexY);
 
-									positionCoefitients[energyTransferRadius + indexX][energyTransferRadius + indexY] = tmpCoefficient;
-									positionCoefficientSummary += tmpCoefficient;
-
+									positionCoefitients[energyTransferRadius + indexY][energyTransferRadius + indexX] = tmpCoefficient;
+									//positionCoefficientSummary += tmpCoefficient;
 									//equation 3 is used here to determin coeficients <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 								}
 							}
@@ -219,11 +220,28 @@ public class Cell : MonoBehaviour
 				}
 			}
 
+			//simulate that map has no borders
+			for (int indexY = -energyTransferRadius; indexY < energyTransferRadius; ++indexY)
+			{
+				for (int indexX = -energyTransferRadius; indexX < energyTransferRadius; ++indexX)
+				{
+					int x = indexX + energyTransferRadius;
+					int y = indexY + energyTransferRadius;
+
+					int positionX = myX + indexX;
+					int positionY = myY + indexY;
+
+					int sourceX = energyTransferRadius + (positionX >= 0 && positionX < sizeX ? indexX : -indexX);
+					int sourceY = energyTransferRadius + (positionY >= 0 && positionY < sizeY ? indexY : -indexY);
+
+					positionCoefficientSummary += positionCoefitients[sourceY][sourceX];
+				}
+			}
 
 			//distribute energy basing on coeficients
-			for (int indexX = -energyTransferRadius; indexX < energyTransferRadius; ++indexX)
+			for (int indexY = -energyTransferRadius; indexY <= energyTransferRadius; ++indexY)
 			{
-				for (int indexY = -energyTransferRadius; indexY < energyTransferRadius; ++indexY)
+				for (int indexX = -energyTransferRadius; indexX <= energyTransferRadius; ++indexX)
 				{
 					distance = Mathf.Abs(indexX) + Mathf.Abs(indexY);
 					int positionX = myX + indexX;
@@ -237,8 +255,8 @@ public class Cell : MonoBehaviour
 							{
 								if (positionX != this.x || positionY != this.y)
 								{
-									float energyToTransfer = generatedEnergy * (positionCoefitients[energyTransferRadius + indexX][energyTransferRadius + indexY] / positionCoefficientSummary);
-									tmpCells[positionX][positionY].AquireEnergy(energyToTransfer);
+									float energyToTransfer = generatedEnergy * (positionCoefitients[energyTransferRadius + indexY][energyTransferRadius + indexX] / positionCoefficientSummary);
+									tmpCells[positionY][positionX].AquireEnergy(energyToTransfer);
 								}
 							}
 						}

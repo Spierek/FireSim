@@ -73,7 +73,6 @@ public class WorldGenerator : MonoBehaviour
 	
 	void Update () 
 	{
-
 	}
 
 	#endregion
@@ -158,6 +157,12 @@ public class WorldGenerator : MonoBehaviour
 	{
 		this._windDirectionVector = newWindDirectionVector;
 	}
+
+	//void OnDrawGizmos()
+	//{
+	//	Gizmos.DrawSphere(this.transform.position + Vector3.down, 0.5f);
+	//	Gizmos.DrawLine(this.transform.position + Vector3.down, this.transform.position + Vector3.down + this.WindDirectionVector * 5.0f);
+	//}
 
 	#endregion
 }
