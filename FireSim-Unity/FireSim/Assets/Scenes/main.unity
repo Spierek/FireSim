@@ -310,6 +310,8 @@ MonoBehaviour:
   - {fileID: 139446, guid: 48952514c039db246b5d0eab108e783a, type: 2}
   - {fileID: 128640, guid: 3b3123d68e88e9f44b580648a64929a0, type: 2}
   - {fileID: 128640, guid: 28bbb7d1f7f0d924482af9a5b195cc11, type: 2}
+  - {fileID: 139446, guid: a8408da81be649048b974b90cc2aab28, type: 2}
+  - {fileID: 127334, guid: 77787445d18dce74db7cf9d5bd7536fe, type: 2}
   currentSeed: 1534
   sizeX: 10
   sizeY: 10
