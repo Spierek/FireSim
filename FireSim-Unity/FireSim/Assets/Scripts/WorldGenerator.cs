@@ -125,6 +125,7 @@ public class WorldGenerator : MonoBehaviour
 				cell.Setup(x, y, cellSize);
 				cell.SetMaterial(selectedMaterials[rand.Next(0, selectedCount)]);		// TODO: would be nice to have a percentage-based material type setup? (some stuff is placed rarely)
 				cell.SetValues(rand);
+				cell.SetTemperature(globalTemperature);
 
 				_cells[y].Add(cell);
 			}

@@ -106,6 +106,10 @@ public class Cell : MonoBehaviour
 		initialMass = materialMass;
 	}
 
+	public void SetTemperature(float temp) {
+		currentTemperature = temp;
+	}
+
 	public void Ignite() 
 	{
 		if (this.materialMass > 0.0f && !materialType.isNonFlammable)
