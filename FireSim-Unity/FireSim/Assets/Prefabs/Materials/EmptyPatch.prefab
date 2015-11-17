@@ -41,10 +41,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ignitionTemperature: 2000
   fuelEnergy: 5
-  burnSpeed: .0500000007
-  heatTransferCoefficient: 15
+  burnSpeed: 5
+  heatTransferCoefficient: 5
   emissivity: 0
-  moisture: 10
+  moisture: 60
   specificHeat: 2400
 --- !u!1001 &100100000
 Prefab:
@@ -67,11 +67,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: burnSpeed
-      value: .0500000007
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: heatTransferCoefficient
-      value: 15
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: emissivity
@@ -83,7 +83,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: moisture
-      value: 10
+      value: 60
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

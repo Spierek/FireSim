@@ -23,12 +23,15 @@ public class Cell : MonoBehaviour
 
 	private Color		temperatureColorA = new Color(0, 0, 1, 0.3f);
 	private Color		temperatureColorB = new Color(1, 0.4f, 0.4f, 0.8f);
+	private Color		temperatureColorC = new Color(0f, 0f, 0f, 0.5f);
+	private Color		temperatureColorD = new Color(0f, 0f, 0f, 0.1f);
 
 	//fire values;
 	private bool _isBurning = false;
 	public bool IsBurning { get { return this._isBurning; } }
 	private float _aquiredEnergy = 0.0f;
 	private float _storedEnergy = 0.0f;
+	private float		initialMass;
 
 	#endregion
 
@@ -63,7 +66,15 @@ public class Cell : MonoBehaviour
 	{
 		if (WorldGenerator.Instance.drawTemperatureGizmos && materialSet) 
 		{
-			Gizmos.color = Color.Lerp(temperatureColorA, temperatureColorB, Mathf.Clamp01(currentTemperature / materialType.ignitionTemperature));
+			if (!IsBurning)
+				Gizmos.color = Color.Lerp(temperatureColorA, temperatureColorB, Mathf.Clamp01(currentTemperature / materialType.ignitionTemperature));
+			else if (materialMass > 0)
+				Gizmos.color = Color.Lerp(temperatureColorB, temperatureColorC, 1 - materialMass / initialMass);
+			
+			if (materialMass == 0)
+				Gizmos.color = temperatureColorD;
+
+
 			Gizmos.DrawCube(transform.position + transform.up * 0.4f, Vector3.one * 0.9f);
 		}
 	}
@@ -92,6 +103,7 @@ public class Cell : MonoBehaviour
 	public void SetValues(System.Random rand) 
 	{
 		materialMass = rand.Next((int)materialMassRange.x, (int)materialMassRange.y * 100) / 100f;
+		initialMass = materialMass;
 	}
 
 	public void Ignite() 

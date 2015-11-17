@@ -200,35 +200,35 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22465448, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22465448, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22465448, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 22465448, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 22470186, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22470186, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 22477176, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22477176, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 22465492, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_AnchorMax.y
@@ -363,6 +363,8 @@ MonoBehaviour:
   - {fileID: 128640, guid: 3b3123d68e88e9f44b580648a64929a0, type: 2}
   - {fileID: 128640, guid: 28bbb7d1f7f0d924482af9a5b195cc11, type: 2}
   - {fileID: 128640, guid: 0054aab49df57474e9872dc9dc19be59, type: 2}
+  - {fileID: 139446, guid: a8408da81be649048b974b90cc2aab28, type: 2}
+  - {fileID: 127334, guid: 77787445d18dce74db7cf9d5bd7536fe, type: 2}
   currentSeed: 1534
   sizeX: 20
   sizeY: 20
