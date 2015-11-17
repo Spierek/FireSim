@@ -28,5 +28,25 @@ public class CellMaterial : MonoBehaviour
 
 	public float specificHeat;
 
+	public bool isNonFlammable = false;
+
+	public GameObject liveMesh;
+	public GameObject burnedMesh;
+	#endregion
+
+	#region Monobehaviour
+	public void Awake() {
+		if (!isNonFlammable) {
+			liveMesh.SetActive(true);
+			burnedMesh.SetActive(false);
+		}
+	}
+
+	public void SwitchMesh() {
+		if (!isNonFlammable) {
+			liveMesh.SetActive(false);
+			burnedMesh.SetActive(true);
+		}
+	}
 	#endregion
 }
