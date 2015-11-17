@@ -74,7 +74,6 @@ public class Cell : MonoBehaviour
 			if (materialMass == 0)
 				Gizmos.color = temperatureColorD;
 
-
 			Gizmos.DrawCube(transform.position + transform.up * 0.4f, Vector3.one * 0.9f);
 		}
 	}
@@ -124,6 +123,7 @@ public class Cell : MonoBehaviour
 	{
 		this._isBurning = false;
 		this.fireParticles.Stop();
+		materialType.SwitchMesh();
 	}
 
 	private void ProcessCalculationSelf()
@@ -280,7 +280,7 @@ public class Cell : MonoBehaviour
 				}
 			}
 
-			if (this.materialMass <= 0.0f)
+			if (this.materialMass <= 0.0f && IsBurning)
 			{
 				PutOffFire();
 			}
