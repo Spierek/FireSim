@@ -33,6 +33,9 @@ public class GUIGlobalsPanel : MonoBehaviour
 	private Text _worldWindSpeedLabel = null;
 
 	[SerializeField]
+	private Text _currentSeedLabel = null;
+
+	[SerializeField]
 	private GameObject _windDirectionArrowGO = null;
 	[SerializeField]
 	private MeshRenderer _windDirectionArrowMeshRenderer = null;
@@ -108,6 +111,10 @@ public class GUIGlobalsPanel : MonoBehaviour
 			{
 				Vector3 windForward = this._windDirectionArrowGO.transform.up; //arrow is rotated by 90 in pitch
 				this._currentWorldGenerator.UpdateWindDirection(windForward);
+			}
+
+			if (_currentSeedLabel != null) {
+				_currentSeedLabel.text = WorldGenerator.Instance.currentSeed.ToString();
 			}
 		}
 
@@ -268,7 +275,14 @@ public class GUIGlobalsPanel : MonoBehaviour
 			tmpToggle.onValueChanged.AddListener(onToggle);
 		}
 	}
+	
 
+	public void NewSeededMap()
+	{
+		WorldGenerator.Instance.GenerateNewSeed();
+		WorldGenerator.Instance.Generate();
+		_currentSeedLabel.text = WorldGenerator.Instance.currentSeed.ToString();
+	}
 	public void GenerateMap()
 	{
 		WorldGenerator.Instance.Generate();

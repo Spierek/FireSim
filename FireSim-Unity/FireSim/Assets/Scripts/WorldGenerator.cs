@@ -70,14 +70,12 @@ public class WorldGenerator : MonoBehaviour
 			}
 		}
 	}
-	
-	void Update () 
-	{
-	}
-
 	#endregion
 
 	#region Methods
+	public void GenerateNewSeed() {
+		currentSeed = Random.Range(0, 123456);
+	}
 
 	public void Generate() 
 	{
