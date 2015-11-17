@@ -18,11 +18,18 @@ public class WorldGenerator : MonoBehaviour
 	public const float windSpeed_min = 0.0f;
 	public const float windSpeed_max = 30.0f;
 
+	public const int energyTransferRadius = 3;
+	public const float energyTransferPowerLevel = 2.0f;
+
+	public const float distanceCoeficient_min = 0.0f;
+	public const float distanceCoeficient_max = 1.0f;
+
+	public const float energyTransferDistance_min = 0.0f;
+	public const float energyTransferDistance_max = (float)energyTransferRadius;
+
 	public const float windInfluenceCoefficient = 1.0f;
 
 	public const float stefan_boltzman_coefficient = 5.67f * 0.00000001f;
-
-	public const int energyTransferRadius = 2;
 
 	[Header("Prefabs")]
 	public GameObject			cellPrefab;

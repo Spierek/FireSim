@@ -42,6 +42,9 @@ public class Cell : MonoBehaviour
 	{
 		this.currentTemperature = WorldGenerator.Instance.globalTemperature;
 		this.waterMass = this.materialMass * this.materialType.moisture;
+
+		this._storedEnergy = 0.0f;
+		this._aquiredEnergy = 0.0f;
 	}
 
 	void Update () 
@@ -57,6 +60,13 @@ public class Cell : MonoBehaviour
 	void LateUpdate()
 	{
 		this.ProcessCalculationOthers();
+
+
+		if (this._aquiredEnergy > 0.0f)
+		{
+			this._storedEnergy += this._aquiredEnergy;
+		}
+		this._aquiredEnergy = 0.0f;
 	}
 
 	void OnDrawGizmos() 
@@ -163,6 +173,10 @@ public class Cell : MonoBehaviour
 			for (int i = 0; i < coefficientTableSize; ++i)
 			{
 				positionCoefitients[i] = new float[coefficientTableSize];
+				//for(int j = 0;j < coefficientTableSize;++j)
+				//{
+				//	positionCoefitients[i][j] = 0.0f;
+				//}
 			}
 
 			//for(int i = 0;i < coefficientTableSize;++i)
@@ -198,6 +212,11 @@ public class Cell : MonoBehaviour
 									Vector3 myCellToTargetBoom = tmpCells[positionY][positionX].transform.position - myPosition;
 									Vector3 myCellToTargetDirection = myCellToTargetBoom.normalized;
 
+									//distance in floating point number
+									float fDistance = myCellToTargetBoom.magnitude;
+									float distanceValue = (fDistance - WorldGenerator.energyTransferDistance_min) / (WorldGenerator.energyTransferDistance_max - WorldGenerator.energyTransferDistance_min);
+									float distanceCoeficient = Mathf.Lerp(WorldGenerator.distanceCoeficient_max, WorldGenerator.distanceCoeficient_min, distanceValue);
+
 									/* delta T */
 									float deltaTemp = Mathf.Abs(myTemperature - tmpCells[positionY][positionX].currentTemperature);
 									/* W */
@@ -205,10 +224,8 @@ public class Cell : MonoBehaviour
 
 									/* EQ 3 */
 									float tmpCoefficient = deltaTemp * (windInfluenceCoeficient * windDirectionCoeficient * windSpeed + myEmissivity * stefan_boltzman_coefficient * Mathf.Pow(deltaTemp,3));
-									//Debug.LogFormat("{0} {1}", windInfluenceCoeficient * windDirectionCoeficient * windSpeed, myEmissivity * stefan_boltzman_coefficient * Mathf.Pow(deltaTemp, 3));
-									//Debug.LogFormat("myPositionX: {0} myPositionY: {1} indexX: {2} indexY: {3} positionX: {4} positionY: {5}",myX,myY,indexX,indexY,positionX,positionY);
-									//Debug.LogFormat("arraySize: {0} secondSize: {1}", positionCoefitients.Length, positionCoefitients[0].Length);
-									//Debug.LogFormat("check {0} {1}", energyTransferRadius + indexX, energyTransferRadius + indexY);
+
+									tmpCoefficient *= Mathf.Pow(distanceCoeficient,WorldGenerator.energyTransferPowerLevel);
 
 									positionCoefitients[energyTransferRadius + indexY][energyTransferRadius + indexX] = tmpCoefficient;
 									//positionCoefficientSummary += tmpCoefficient;
@@ -220,21 +237,25 @@ public class Cell : MonoBehaviour
 				}
 			}
 
+			//positionCoefficientSummary = 0.0f;
 			//simulate that map has no borders
 			for (int indexY = -energyTransferRadius; indexY < energyTransferRadius; ++indexY)
 			{
 				for (int indexX = -energyTransferRadius; indexX < energyTransferRadius; ++indexX)
 				{
-					int x = indexX + energyTransferRadius;
-					int y = indexY + energyTransferRadius;
+					if (indexX != 0 || indexY != 0)
+					{
+						int x = indexX + energyTransferRadius;
+						int y = indexY + energyTransferRadius;
 
-					int positionX = myX + indexX;
-					int positionY = myY + indexY;
+						int positionX = myX + indexX;
+						int positionY = myY + indexY;
 
-					int sourceX = energyTransferRadius + (positionX >= 0 && positionX < sizeX ? indexX : -indexX);
-					int sourceY = energyTransferRadius + (positionY >= 0 && positionY < sizeY ? indexY : -indexY);
+						int sourceX = energyTransferRadius + (positionX >= 0 && positionX < sizeX ? indexX : -indexX);
+						int sourceY = energyTransferRadius + (positionY >= 0 && positionY < sizeY ? indexY : -indexY);
 
-					positionCoefficientSummary += positionCoefitients[sourceY][sourceX];
+						positionCoefficientSummary += positionCoefitients[sourceY][sourceX];
+					}
 				}
 			}
 
@@ -256,7 +277,11 @@ public class Cell : MonoBehaviour
 								if (positionX != this.x || positionY != this.y)
 								{
 									float energyToTransfer = generatedEnergy * (positionCoefitients[energyTransferRadius + indexY][energyTransferRadius + indexX] / positionCoefficientSummary);
-									tmpCells[positionY][positionX].AquireEnergy(energyToTransfer);
+									if(energyToTransfer > 0.0f)
+									{
+										tmpCells[positionY][positionX].AquireEnergy(energyToTransfer);
+									}
+
 								}
 							}
 						}
@@ -272,81 +297,101 @@ public class Cell : MonoBehaviour
 	}
 	private void ProcessCalculationOthers()
 	{
-		float massSpecificHeatCoefitient = (this.materialMass * this.materialType.specificHeat + this.waterMass * CellMaterial.specificHeat_water);
-
-		if(this.currentTemperature < CellMaterial.vaporizationTemperature)
+		if (this.materialMass > 0.0f && !this.IsBurning)
 		{
-			//possible grow of temperature below vaporization temperature
-			float deltaTemperature = this._aquiredEnergy / massSpecificHeatCoefitient;
-			
-			if (this.currentTemperature + deltaTemperature <= CellMaterial.vaporizationTemperature)
+
+			float massSpecificHeatCoefitient = (this.materialMass * this.materialType.specificHeat + this.waterMass * CellMaterial.specificHeat_water);
+			float massOnlyHeatCoefficient = this.materialMass * this.materialType.specificHeat;
+
+			if (this.currentTemperature < CellMaterial.vaporizationTemperature)
 			{
-				this.currentTemperature += deltaTemperature;
-				this._aquiredEnergy = 0.0f;
-			}else{
+				//possible grow of temperature below vaporization temperature
+				float deltaTemperature = this._aquiredEnergy / massSpecificHeatCoefitient;
 
-				//get to vaporization temperature
-				float missingTemperature = CellMaterial.vaporizationTemperature - this.currentTemperature;
+				if (this.currentTemperature + deltaTemperature < CellMaterial.vaporizationTemperature)
+				{
+					this.currentTemperature += deltaTemperature;
+					this._aquiredEnergy = 0.0f;
+					return;
+				}
+				else
+				{
 
-				float energyRequiredToGetVaporizationTemperature = missingTemperature * massSpecificHeatCoefitient;
+					//get to vaporization temperature
+					float missingTemperature = CellMaterial.vaporizationTemperature - this.currentTemperature;
 
-				this.currentTemperature = CellMaterial.vaporizationTemperature;
+					float energyRequiredToGetVaporizationTemperature = missingTemperature * massSpecificHeatCoefitient;
 
-				this._aquiredEnergy -= energyRequiredToGetVaporizationTemperature;
+					this.currentTemperature = CellMaterial.vaporizationTemperature;
 
+					this._aquiredEnergy -= energyRequiredToGetVaporizationTemperature;
+
+				}
+			}
+
+			if (this.currentTemperature == CellMaterial.vaporizationTemperature && this.waterMass > 0.0f && this._aquiredEnergy > 0.0f)
+			{
+				//possible mass of vaporized water
+				float deltaWaterMassVaporization = this._aquiredEnergy * CellMaterial.specificHeat_water;
+
+				if (this.waterMass > deltaWaterMassVaporization)
+				{
+					//less energy to fully vaporize
+					this.waterMass -= deltaWaterMassVaporization;
+					this._aquiredEnergy = 0.0f;
+					return;
+				}
+				else
+				{
+					//more energy to fully vaporize
+					float energyNeededToVaporizeRemainingWater = this.waterMass * CellMaterial.specificHeat_water;
+					this.waterMass = 0.0f;
+					this._aquiredEnergy -= energyNeededToVaporizeRemainingWater;
+
+				}
+			}
+
+			if (this.currentTemperature >= CellMaterial.vaporizationTemperature && this.waterMass == 0.0f && this._aquiredEnergy > 0.0f)
+			{
+				//possible grow in temperature
+				float deltaTemperature = this._aquiredEnergy / massOnlyHeatCoefficient;
+
+				if (deltaTemperature + this.currentTemperature < this.materialType.ignitionTemperature)
+				{
+					//less energy than needed to ignite
+
+					this.currentTemperature += deltaTemperature;
+					this._aquiredEnergy = 0.0f;
+					return;
+				}
+				else
+				{
+
+					//more energy than needed to ignite
+					float deltaTemperatureMissingToIgnite = this.materialType.ignitionTemperature - this.currentTemperature;
+					float energyToIgnite = deltaTemperatureMissingToIgnite * massOnlyHeatCoefficient;
+
+					this.currentTemperature = this.materialType.ignitionTemperature;
+					this._aquiredEnergy -= energyToIgnite;
+
+				}
+			}
+
+			if(this.currentTemperature >= this.materialType.ignitionTemperature)
+			{
+				Ignite();
 			}
 		}
-
-		if(this.currentTemperature == CellMaterial.vaporizationTemperature && this.waterMass > 0.0f)
-		{
-			float deltaWaterMassVaporization = this._aquiredEnergy * CellMaterial.specificHeat_water;
-			if(this.waterMass >= deltaWaterMassVaporization)
-			{
-				//less energy to fully vaporize
-				this.waterMass -= deltaWaterMassVaporization;
-				this._aquiredEnergy = 0.0f;
-			}else{
-
-				//more energy to fullt vaporize
-				float energyToVaporize = this.waterMass * CellMaterial.specificHeat_water;
-				this.waterMass = 0.0f;
-				this._aquiredEnergy -= energyToVaporize;
-				
-			}
-		}
-
-		if(this.currentTemperature >= CellMaterial.vaporizationTemperature && this.waterMass == 0.0f && this._aquiredEnergy > 0.0f)
-		{
-			float deltaTemperature = this._aquiredEnergy / massSpecificHeatCoefitient;
-			if(deltaTemperature + this.currentTemperature < this.materialType.ignitionTemperature)
-			{
-				//less energy than needed to ignite
-
-				this.currentTemperature += deltaTemperature;
-				this._aquiredEnergy = 0.0f;
-			}else{
-
-				//more energy than needed to ignite
-				float temperatureToIgnite = this.materialType.ignitionTemperature - this.currentTemperature;
-				float energyToIgnite = temperatureToIgnite * massSpecificHeatCoefitient;
-				
-				this.currentTemperature = this.materialType.ignitionTemperature;
-				this._aquiredEnergy -= energyToIgnite;
-
-				Ignite();				
-			}
-		}
-
-		this._storedEnergy += this._aquiredEnergy;
-		this._aquiredEnergy = 0.0f;
 	}
 
 	public void AquireEnergy(float energy)
 	{
-		if (!this.IsBurning)
-		{
-			this._aquiredEnergy += energy;
-		}
+		this._aquiredEnergy += energy;
+	}
+
+	public void PrintStatus()
+	{
+		Debug.LogFormat("Pos: {0} {1} Temp: {2} Mass: {3} WaterMass: {4}",this.x,this.y,currentTemperature,this.materialMass,this.waterMass);
 	}
 
 	#endregion

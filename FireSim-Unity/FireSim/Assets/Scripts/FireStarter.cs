@@ -2,7 +2,16 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class FireStarter : MonoBehaviour {
+public class FireStarter : MonoBehaviour 
+{
+	enum ClickType
+	{
+		CT_IGNITE = 0,
+		CT_INFO = 1,
+
+		CT_COUNT
+	}
+
 	[SerializeField]
 	private Camera _mainCamera = null;
 
@@ -16,14 +25,21 @@ public class FireStarter : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Input.GetMouseButtonDown(0)) {
-			if(!EventSystem.current.IsPointerOverGameObject()) {
-				ProcesThunder();
+		if (Input.GetMouseButtonDown(0)) 
+		{
+			if(!EventSystem.current.IsPointerOverGameObject()) 
+			{
+				if(Input.GetKey(KeyCode.LeftAlt))
+				{
+					ProcesThunder(ClickType.CT_INFO);
+				}else{
+					ProcesThunder(ClickType.CT_IGNITE);
+				}
 			}
 		}
 	}
 
-	private void ProcesThunder()
+	private void ProcesThunder(ClickType clickType = ClickType.CT_IGNITE)
 	{
 		Ray mouseRay = this._mainCamera.ScreenPointToRay(Input.mousePosition);
 		RaycastHit rayHit = new RaycastHit();
@@ -35,13 +51,22 @@ public class FireStarter : MonoBehaviour {
 			Quaternion quat = Quaternion.identity;
 			quat.eulerAngles = rot;
 
-			GameObject go = (GameObject)Instantiate(this._thunder, rayHit.point, quat);
-			Destroy(go, 1.5f);
+			
 
 			Cell tmpCell = rayHit.collider.GetComponent<Cell>();
 			if(tmpCell != null)
 			{
-				tmpCell.Ignite();
+				switch(clickType)
+				{
+					case ClickType.CT_IGNITE:
+						GameObject go = (GameObject)Instantiate(this._thunder, rayHit.point, quat);
+						Destroy(go, 1.5f);
+						tmpCell.Ignite();
+						break;
+					case ClickType.CT_INFO:
+						tmpCell.PrintStatus();
+						break;
+				}
 			}
 		}
 	}
