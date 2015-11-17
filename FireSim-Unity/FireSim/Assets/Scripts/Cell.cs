@@ -27,10 +27,10 @@ public class Cell : MonoBehaviour
 	private Color		temperatureColorD = new Color(0f, 0f, 0f, 0.1f);
 
 	//fire values;
-	private bool _isBurning = false;
-	public bool IsBurning { get { return this._isBurning; } }
-	private float _aquiredEnergy = 0.0f;
-	private float _storedEnergy = 0.0f;
+	private bool		_isBurning = false;
+	public bool			IsBurning { get { return this._isBurning; } }
+	private float		_aquiredEnergy = 0.0f;
+	private float		_storedEnergy = 0.0f;
 	private float		initialMass;
 
 	#endregion
@@ -64,7 +64,7 @@ public class Cell : MonoBehaviour
 
 	void OnDrawGizmos() 
 	{
-		if (WorldGenerator.Instance.drawTemperatureGizmos && materialSet) 
+		if (WorldGenerator.Instance.drawTemperatureGizmos && materialSet && !materialType.isNonFlammable) 
 		{
 			if (!IsBurning)
 				Gizmos.color = Color.Lerp(temperatureColorA, temperatureColorB, Mathf.Clamp01(currentTemperature / materialType.ignitionTemperature));
@@ -108,7 +108,7 @@ public class Cell : MonoBehaviour
 
 	public void Ignite() 
 	{
-		if (this.materialMass > 0.0f)
+		if (this.materialMass > 0.0f && !materialType.isNonFlammable)
 		{
 			this.waterMass = 0.0f;
 			this._isBurning = true;
@@ -355,7 +355,7 @@ public class Cell : MonoBehaviour
 
 	public void AquireEnergy(float energy)
 	{
-		if (!this.IsBurning)
+		if (!this.IsBurning && !materialType.isNonFlammable)
 		{
 			this._aquiredEnergy += energy;
 		}

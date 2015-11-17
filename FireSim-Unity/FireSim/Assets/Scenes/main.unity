@@ -366,8 +366,8 @@ MonoBehaviour:
   - {fileID: 139446, guid: a8408da81be649048b974b90cc2aab28, type: 2}
   - {fileID: 127334, guid: 77787445d18dce74db7cf9d5bd7536fe, type: 2}
   currentSeed: 1534
-  sizeX: 20
-  sizeY: 20
+  sizeX: 15
+  sizeY: 15
   yOffsetJitter: .100000001
   cellSize: 1
   globalTemperature: 20

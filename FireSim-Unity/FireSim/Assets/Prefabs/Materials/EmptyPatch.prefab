@@ -46,6 +46,7 @@ MonoBehaviour:
   emissivity: 0
   moisture: 60
   specificHeat: 2400
+  isNonFlammable: 1
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -84,6 +85,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: moisture
       value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: isNonFlammable
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

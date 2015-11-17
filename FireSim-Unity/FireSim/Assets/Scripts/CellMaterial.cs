@@ -28,5 +28,7 @@ public class CellMaterial : MonoBehaviour
 
 	public float specificHeat;
 
+	public bool isNonFlammable = false;
+
 	#endregion
 }
