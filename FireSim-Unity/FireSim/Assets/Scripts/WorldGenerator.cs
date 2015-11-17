@@ -18,6 +18,12 @@ public class WorldGenerator : MonoBehaviour
 	public const float windSpeed_min = 0.0f;
 	public const float windSpeed_max = 30.0f;
 
+	public const float windInfluenceCoefficient = 1.0f;
+
+	public const float stefan_boltzman_coefficient = 5.67f * 0.00000001f;
+
+	public const int energyTransferRadius = 2;
+
 	[Header("Prefabs")]
 	public GameObject			cellPrefab;
 	public List<GameObject>		materialPrefabs = new List<GameObject>();
@@ -45,26 +51,52 @@ public class WorldGenerator : MonoBehaviour
 	private List<List<Cell>> _cells = new List<List<Cell>>();
 	public List<List<Cell>> Cells { get { return this._cells; } }
 
+	private bool _isWorldGenerated = false;
+	public bool[] selectableSpawn = null;
+
 	#endregion
 
 	#region Monobehaviour
 	void Awake () 
 	{
 		WorldGenerator._instance = this;
-		Generate();
+		if( (this.selectableSpawn != null && this.selectableSpawn.Length != this.materialPrefabs.Count) || this.selectableSpawn == null )
+		{
+			int materialCount = this.materialPrefabs.Count;
+			this.selectableSpawn = new bool[materialCount];
+			for(int i = 0;i < materialCount;++i)
+			{
+				this.selectableSpawn[i] = true;
+			}
+		}
 	}
 	
 	void Update () 
 	{
-
 	}
 
 	#endregion
 
 	#region Methods
 
-	private void Generate() 
+	public void Generate() 
 	{
+		if(this._isWorldGenerated)
+		{
+			this.ClearWorld();
+		}
+
+		int materialCount = this.materialPrefabs.Count;
+		List<GameObject> selectedMaterials = new List<GameObject>();
+		for(int i = 0;i < materialCount;++i)
+		{
+			if(this.selectableSpawn[i])
+			{
+				selectedMaterials.Add(this.materialPrefabs[i]);
+			}
+		}
+		int selectedCount = selectedMaterials.Count;
+
 		GameObject go;
 		Cell cell;
 		System.Random rand;
@@ -91,12 +123,29 @@ public class WorldGenerator : MonoBehaviour
 
 				// setup cell
 				cell.Setup(x, y, cellSize);
-				cell.SetMaterial(materialPrefabs[rand.Next(0, materialPrefabs.Count)]);		// TODO: would be nice to have a percentage-based material type setup? (some stuff is placed rarely)
+				cell.SetMaterial(selectedMaterials[rand.Next(0, selectedCount)]);		// TODO: would be nice to have a percentage-based material type setup? (some stuff is placed rarely)
 				cell.SetValues(rand);
 
 				_cells[y].Add(cell);
 			}
 		}
+		this._isWorldGenerated = true;
+	}
+
+	public void ClearWorld()
+	{
+		for(int y = 0;y < this.sizeY;++y)
+		{
+			for(int x = 0;x < this.sizeX;++x)
+			{
+				if(this._cells[y][x] != null)
+				{
+					GameObject.Destroy(this._cells[y][x].gameObject);
+				}
+			}
+			this._cells[y].Clear();
+		}
+		this._isWorldGenerated = false;
 	}
 
 	public void SetTemperatureDebugGizmos(bool enabled) 
@@ -108,6 +157,12 @@ public class WorldGenerator : MonoBehaviour
 	{
 		this._windDirectionVector = newWindDirectionVector;
 	}
+
+	//void OnDrawGizmos()
+	//{
+	//	Gizmos.DrawSphere(this.transform.position + Vector3.down, 0.5f);
+	//	Gizmos.DrawLine(this.transform.position + Vector3.down, this.transform.position + Vector3.down + this.WindDirectionVector * 5.0f);
+	//}
 
 	#endregion
 }
