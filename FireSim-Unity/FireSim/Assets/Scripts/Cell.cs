@@ -141,7 +141,8 @@ public class Cell : MonoBehaviour
 	// uses a seeded random instance for deterministic generation
 	public void SetValues(System.Random rand) 
 	{
-		materialMass = (rand.Next((int)WorldGenerator.cellMass_min, (int)WorldGenerator.cellMass_max) * 100) / 100f;
+		float tempMass = (rand.Next((int)WorldGenerator.cellMass_min, (int)WorldGenerator.cellMass_max) * 100) / 100f;
+		materialMass = Mathf.Lerp(tempMass, (WorldGenerator.cellMass_min + WorldGenerator.cellMass_max) / 2, 1 - WorldGenerator.Instance.cellMassRandomization);
 		initialMass = materialMass;
 	}
 

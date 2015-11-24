@@ -39,11 +39,19 @@ public class GUIGlobalsPanel : MonoBehaviour
 	private GameObject _windDirectionArrowGO = null;
 	[SerializeField]
 	private MeshRenderer _windDirectionArrowMeshRenderer = null;
+	[SerializeField]
+	private WindZone _windZoneObject = null;
+
 
 	[SerializeField]
 	private Slider _worldSizeSlider = null;
 	[SerializeField]
 	private Text _worldSizeLabel = null;
+
+	[SerializeField]
+	private Slider _cellMassSlider = null;
+	[SerializeField]
+	private Text _cellMassLabel = null;
 
 	private float _windDirectionArrowMaxAlpha = 0.4f;
 	private float _windDirectionArrowTimeToFadeOut = 1.0f;
@@ -73,6 +81,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 	{
 		this._lastRealTime = Time.realtimeSinceStartup;
 		this._windDirectionArrowTimer = this._windDirectionArrowTimeToFadeOut;
+		_windZoneObject.windMain = 0f;
 
 		if(this._currentWorldGenerator == null)
 		{
@@ -154,6 +163,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 		this.ProcesWind();
 		this.ProcesWindDirectionArrow();
 		this.ProcessWorldSize();
+		this.ProcessCellMass();
 	}
 
 	#endregion MonobehaviourMethods
@@ -206,6 +216,8 @@ public class GUIGlobalsPanel : MonoBehaviour
 				this._currentWindSpeedSliderValue = worldWindSpeedSliderTmpValue;
 				float windSpeed = Mathf.Lerp(WorldGenerator.windSpeed_min, WorldGenerator.windSpeed_max, worldWindSpeedSliderTmpValue);
 				this._currentWorldGenerator.windSpeed = windSpeed;
+				this._windZoneObject.windMain = windSpeed / 200f;
+
 				if (this._worldWindSpeedLabel != null)
 				{
 					SetWindSpeedLabel(windSpeed);
@@ -228,7 +240,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 			this._windDirectionArrowTimer += Time.deltaTime;
 			if(this._windDirectionArrowTimer < this._windDirectionArrowTimeToFadeOut)
 			{
-				if (!this._windDirectionArrowGO.activeSelf) this._windDirectionArrowGO.SetActive(true);
+				if (!_windDirectionArrowMeshRenderer.enabled) _windDirectionArrowMeshRenderer.enabled = true;
 
 				Material arrowMaterial = this._windDirectionArrowMeshRenderer.material;
 
@@ -247,7 +259,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 				this._currentWorldGenerator.UpdateWindDirection(windForward);
 
 			}else{
-				if (this._windDirectionArrowGO.activeSelf) this._windDirectionArrowGO.SetActive(false);
+				if (_windDirectionArrowMeshRenderer.enabled) _windDirectionArrowMeshRenderer.enabled = false;
 			}
 		}
 	}
@@ -263,6 +275,15 @@ public class GUIGlobalsPanel : MonoBehaviour
 				this.SetWorldSizeLabel(this._currentWorldSize);
 			}
 			this._lastWorldSize = this._currentWorldSize;
+		}
+	}
+
+	private void ProcessCellMass()
+	{
+		if (this._cellMassSlider != null && this._currentWorldGenerator != null)
+		{
+			this._currentWorldGenerator.cellMassRandomization = _cellMassSlider.value / 100f;
+			SetCellMassLabel(Mathf.RoundToInt(_cellMassSlider.value));
 		}
 	}
 
@@ -284,6 +305,11 @@ public class GUIGlobalsPanel : MonoBehaviour
 	private void SetWorldSizeLabel(int value)
 	{
 		this._worldSizeLabel.text = value + "Cells";
+	}
+
+	private void SetCellMassLabel(int value)
+	{
+		this._cellMassLabel.text = value + "%";
 	}
 
 	private void InitializeSelectableToggle()

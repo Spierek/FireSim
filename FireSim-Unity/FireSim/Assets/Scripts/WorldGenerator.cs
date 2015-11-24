@@ -27,7 +27,7 @@ public class WorldGenerator : MonoBehaviour
 	public const float energyTransferDistance_min = 0.0f;
 	public const float energyTransferDistance_max = (float)energyTransferRadius;
 
-	public const float windInfluenceCoefficient = 1.0f;
+	public const float windInfluenceCoefficient = 20f;
 
 	public const float stefan_boltzman_coefficient = 5.67f * 0.00000001f;
 
@@ -63,6 +63,8 @@ public class WorldGenerator : MonoBehaviour
 	public float		windDirection = 0.0f;
 	[Range(windSpeed_min, windSpeed_max)]
 	public float		windSpeed = 10.0f;
+	[Range(0, 1)]
+	public float		cellMassRandomization = 1;
 
 	private Vector3 _windDirectionVector = Vector3.zero;
 	public Vector3 WindDirectionVector { get { return this._windDirectionVector; } }
