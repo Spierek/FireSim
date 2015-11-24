@@ -19,7 +19,7 @@ public class WorldGenerator : MonoBehaviour
 	public const float windSpeed_max = 30.0f;
 
 	public const int energyTransferRadius = 3;
-	public const float energyTransferPowerLevel = 2.0f;
+	public const float energyTransferPowerLevel = 3.0f;
 
 	public const float distanceCoeficient_min = 0.0f;
 	public const float distanceCoeficient_max = 1.0f;

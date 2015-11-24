@@ -200,35 +200,35 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22465448, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22465448, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22465448, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_SizeDelta.x
-      value: -17
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22465448, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_SizeDelta.y
-      value: -17
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22470186, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22470186, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_SizeDelta.x
-      value: -17
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22477176, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22477176, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_SizeDelta.y
-      value: -17
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22408124, guid: 75afea960647b9a419e50b7133a7564d, type: 2}
       propertyPath: m_AnchorMax.y
@@ -372,9 +372,9 @@ MonoBehaviour:
   cellSize: 1
   globalTemperature: 20
   windDirection: 0
-  windSpeed: 10
+  windSpeed: 0
   drawTemperatureGizmos: 0
-  selectableSpawn: 0101010101
+  selectableSpawn: 00000001000000
 --- !u!1 &1675139947
 GameObject:
   m_ObjectHideFlags: 0
