@@ -36,6 +36,19 @@ public class Cell : MonoBehaviour
 	private float		_storedEnergy = 0.0f;
 	private float		initialMass;
 
+	private bool _isSelected = false;
+	public bool IsSelected
+	{
+		get
+		{
+			return this._isSelected;
+		}
+		set
+		{
+			this._isSelected = value;
+		}
+	}
+
 	#endregion
 
 	#region Monobehaviour

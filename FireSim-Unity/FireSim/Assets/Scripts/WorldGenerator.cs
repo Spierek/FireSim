@@ -70,6 +70,7 @@ public class WorldGenerator : MonoBehaviour
 	private bool _isWorldGenerated = false;
 	public bool[] selectableSpawn = null;
 
+
 	#endregion
 
 	#region Monobehaviour
