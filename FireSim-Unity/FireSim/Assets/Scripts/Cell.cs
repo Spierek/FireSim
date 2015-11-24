@@ -28,6 +28,7 @@ public class Cell : MonoBehaviour
 
 	private MeshRenderer visualizerRenderer;
 	private Material	visualizerMaterial;
+	private MeshRenderer selectRenderer;
 
 	//fire values;
 	private bool		_isBurning = false;
@@ -54,9 +55,15 @@ public class Cell : MonoBehaviour
 	#region Monobehaviour
 	void Awake () 
 	{
+		IsSelected = false;
+		
 		fireParticles = transform.Find("FireParticles").GetComponent<ParticleSystem>();
+
 		visualizerRenderer = transform.Find("Visualizer").GetComponent<MeshRenderer>();
 		visualizerMaterial = visualizerRenderer.material;
+
+		selectRenderer = transform.Find("Select").GetComponent<MeshRenderer>();
+		selectRenderer.enabled = false;
 	}
 
 	void Start()
@@ -471,5 +478,9 @@ public class Cell : MonoBehaviour
 		Debug.LogFormat("Pos: {0} {1} Temp: {2} Mass: {3} WaterMass: {4}",this.x,this.y,currentTemperature,this.materialMass,this.waterMass);
 	}
 
+	public void Selection(bool selected) {
+		selectRenderer.enabled = selected;
+		IsSelected = selected;
+	}
 	#endregion
 }
