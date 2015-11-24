@@ -18,7 +18,6 @@ public class Cell : MonoBehaviour
 
 	private bool		materialSet = false;
 	// preset values
-	private Vector2			materialMassRange = new Vector2(100, 100);
 	private ParticleSystem	fireParticles;
 
 	private Color		temperatureColorA = new Color(0, 0, 1, 0.3f);
@@ -124,7 +123,7 @@ public class Cell : MonoBehaviour
 	// uses a seeded random instance for deterministic generation
 	public void SetValues(System.Random rand) 
 	{
-		materialMass = rand.Next((int)materialMassRange.x, (int)materialMassRange.y * 100) / 100f;
+		materialMass = (rand.Next((int)WorldGenerator.cellMass_min, (int)WorldGenerator.cellMass_max) * 100) / 100f;
 		initialMass = materialMass;
 	}
 

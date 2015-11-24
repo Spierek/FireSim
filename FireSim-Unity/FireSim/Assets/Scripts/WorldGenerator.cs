@@ -31,6 +31,12 @@ public class WorldGenerator : MonoBehaviour
 
 	public const float stefan_boltzman_coefficient = 5.67f * 0.00000001f;
 
+	public const float cellMass_min = 10.0f;
+	public const float cellMass_max = 100.0f;
+
+	public const float cellMoisture_min = 0.0f;
+	public const float cellMoisture_max = 100.0f;
+
 	public const int worldSize_min = 10;
 	public const int worldSize_max = 20;
 
