@@ -26,6 +26,9 @@ public class Cell : MonoBehaviour
 	private Color		temperatureColorC = new Color(0f, 0f, 0f, 0.5f);
 	private Color		temperatureColorD = new Color(0f, 0f, 0f, 0.1f);
 
+	private MeshRenderer visualizerRenderer;
+	private Material	visualizerMaterial;
+
 	//fire values;
 	private bool		_isBurning = false;
 	public bool			IsBurning { get { return this._isBurning; } }
@@ -39,6 +42,8 @@ public class Cell : MonoBehaviour
 	void Awake () 
 	{
 		fireParticles = transform.Find("FireParticles").GetComponent<ParticleSystem>();
+		visualizerRenderer = transform.Find("Visualizer").GetComponent<MeshRenderer>();
+		visualizerMaterial = visualizerRenderer.material;
 	}
 
 	void Start()
@@ -57,6 +62,7 @@ public class Cell : MonoBehaviour
 			Ignite();
 		}
 
+		UpdateVisualizerColor();
 		this.ProcessCalculationSelf();
 	  
 	}
@@ -72,19 +78,24 @@ public class Cell : MonoBehaviour
 		this._aquiredEnergy = 0.0f;
 	}
 
-	void OnDrawGizmos() 
+	void UpdateVisualizerColor() 
 	{
 		if (WorldGenerator.Instance.drawTemperatureGizmos && materialSet && !materialType.isNonFlammable) 
 		{
+			if (!visualizerRenderer.enabled)
+				visualizerRenderer.enabled = true;
+
 			if (!IsBurning)
-				Gizmos.color = Color.Lerp(temperatureColorA, temperatureColorB, Mathf.Clamp01(currentTemperature / materialType.ignitionTemperature));
+				visualizerMaterial.color = Color.Lerp(temperatureColorA, temperatureColorB, Mathf.Clamp01(currentTemperature / materialType.ignitionTemperature));
 			else if (materialMass > 0)
-				Gizmos.color = Color.Lerp(temperatureColorB, temperatureColorC, 1 - materialMass / initialMass);
+				visualizerMaterial.color = Color.Lerp(temperatureColorB, temperatureColorC, 1 - materialMass / initialMass);
 			
 			if (materialMass == 0)
-				Gizmos.color = temperatureColorD;
-
-			Gizmos.DrawCube(transform.position + transform.up * 0.4f, Vector3.one * 0.9f);
+				visualizerMaterial.color = temperatureColorD;
+		}
+		else {
+			if (visualizerRenderer.enabled)
+				visualizerRenderer.enabled = false;
 		}
 	}
 	#endregion
