@@ -33,9 +33,11 @@ public class FireStarter : MonoBehaviour
 			{
 				if(Input.GetKey(KeyCode.LeftAlt))
 				{
-					ProcesThunder(ClickType.CT_INFO);
-				}else{
 					ProcesThunder(ClickType.CT_IGNITE);
+				}
+				if(Input.GetKey(KeyCode.LeftControl))
+				{
+					ProcesThunder(ClickType.CT_INFO);
 				}
 			}
 		}
