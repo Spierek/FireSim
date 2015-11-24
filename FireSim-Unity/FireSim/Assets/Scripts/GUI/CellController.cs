@@ -106,7 +106,7 @@ public class CellController : MonoBehaviour
 		{
 			if(this.SelectedCell != null)
 			{
-				this.SelectedCell.IsSelected = false;
+				this.SelectedCell.Selection(false);
 			}
 
 			RaycastHit hit;
@@ -117,7 +117,8 @@ public class CellController : MonoBehaviour
 				
 				if(this.SelectedCell != null)
 				{
-					this.SelectedCell.IsSelected = true;
+					this.SelectedCell.Selection(true);
+
 				}
 			}else{
 				this.SelectedCell = null;

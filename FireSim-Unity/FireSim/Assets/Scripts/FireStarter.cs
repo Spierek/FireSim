@@ -18,8 +18,6 @@ public class FireStarter : MonoBehaviour
 	[SerializeField]
 	private GameObject _thunder = null;
 
-	private Cell selectedCell;
-
 	void Awake() {
 		if (this._mainCamera == null) {
 			this._mainCamera = this.GetComponent<Camera>();
@@ -68,10 +66,7 @@ public class FireStarter : MonoBehaviour
 						tmpCell.Ignite();
 						break;
 					case ClickType.CT_INFO:
-						if (selectedCell != null)
-							selectedCell.Selection(false);
-						tmpCell.Selection(true);
-						selectedCell = tmpCell;
+						tmpCell.PrintStatus();
 						break;
 				}
 			}
