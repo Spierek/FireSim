@@ -53,6 +53,11 @@ public class GUIGlobalsPanel : MonoBehaviour
 	[SerializeField]
 	private Text _cellMassLabel = null;
 
+	[SerializeField]
+	private InputField _seedField = null;
+
+	private int _currentSeed = -1;
+
 	private float _windDirectionArrowMaxAlpha = 0.4f;
 	private float _windDirectionArrowTimeToFadeOut = 1.0f;
 	private float _windDirectionArrowTimer = 0.0f;
@@ -151,6 +156,13 @@ public class GUIGlobalsPanel : MonoBehaviour
 				{
 					SetWorldSizeLabel(this._currentWorldSize);
 				}
+			}
+
+			if(this._seedField != null)
+			{
+				this._currentSeed = WorldGenerator._instance.currentSeed;
+				this._seedField.text = this._currentSeed.ToString();
+				this._seedField.onEndEdit.AddListener(this.OnSeedEntered);
 			}
 		}
 
@@ -287,6 +299,18 @@ public class GUIGlobalsPanel : MonoBehaviour
 		}
 	}
 
+	private void OnSeedEntered(string newSeedString)
+	{
+		int newSeed = 0;
+		if(int.TryParse(newSeedString,out newSeed))
+		{
+			this._currentSeed = newSeed;
+			WorldGenerator._instance.currentSeed = newSeed;
+		}else{
+			this._seedField.text = "";
+		}
+	}
+
 	private void SetWorldTemperatureLabel(float val) {
 		val = Mathf.Round(val * 10) / 10f;
 		_worldTemperatureLabel.text = val + "°C";
@@ -348,13 +372,21 @@ public class GUIGlobalsPanel : MonoBehaviour
 			tmpToggle.onValueChanged.AddListener(onToggle);
 		}
 	}
-	
+	private void ProcessSeed()
+	{
+
+	}
 
 	public void NewSeededMap()
 	{
 		WorldGenerator.Instance.GenerateNewSeed();
 		WorldGenerator.Instance.Generate();
 		_currentSeedLabel.text = WorldGenerator.Instance.currentSeed.ToString();
+	}
+	public void NewSeed()
+	{
+		WorldGenerator.Instance.GenerateNewSeed();
+		this._seedField.text = WorldGenerator.Instance.currentSeed.ToString();
 	}
 	public void GenerateMap()
 	{

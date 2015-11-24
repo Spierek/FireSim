@@ -18,6 +18,7 @@ public class Cell : MonoBehaviour
 
 	private bool		materialSet = false;
 	// preset values
+	[SerializeField]
 	private ParticleSystem	fireParticles;
 
 	private Color		temperatureColorA = new Color(0, 0, 1, 0.3f);
@@ -25,9 +26,13 @@ public class Cell : MonoBehaviour
 	private Color		temperatureColorC = new Color(0f, 0f, 0f, 0.5f);
 	private Color		temperatureColorD = new Color(0f, 0f, 0f, 0.1f);
 
+	[SerializeField]
 	private MeshRenderer visualizerRenderer;
 	private Material	visualizerMaterial;
+	[SerializeField]
 	private MeshRenderer selectRenderer;
+
+	private GameObject _materialGO = null;
 
 	//fire values;
 	private bool		_isBurning = false;
@@ -46,6 +51,7 @@ public class Cell : MonoBehaviour
 		set
 		{
 			this._isSelected = value;
+			this.Selection(this._isSelected);
 		}
 	}
 
@@ -54,21 +60,15 @@ public class Cell : MonoBehaviour
 	#region Monobehaviour
 	void Awake () 
 	{
-		IsSelected = false;
-		
-		fireParticles = transform.Find("FireParticles").GetComponent<ParticleSystem>();
-
-		visualizerRenderer = transform.Find("Visualizer").GetComponent<MeshRenderer>();
+		this.IsSelected = false;
 		visualizerMaterial = visualizerRenderer.material;
-
-		selectRenderer = transform.Find("Select").GetComponent<MeshRenderer>();
 		selectRenderer.enabled = false;
 	}
 
 	void Start()
 	{
 		this.currentTemperature = WorldGenerator.Instance.globalTemperature;
-		this.waterMass = this.materialMass * this.materialType.moisture;
+		//this.waterMass = this.materialMass * this.materialType.moisture;
 
 		this._storedEnergy = 0.0f;
 		this._aquiredEnergy = 0.0f;
@@ -128,13 +128,18 @@ public class Cell : MonoBehaviour
 		gameObject.name = "Cell(" + x + "," + y + ")";
 	}
 
-	public void SetMaterial(GameObject prefab) {
+	public void SetMaterial(GameObject prefab) 
+	{
+		if(this._materialGO != null)
+		{
+			GameObject.Destroy(this._materialGO);
+		}
 		// spawn material prefab (visualization + values)
-		GameObject go = Instantiate(prefab);
-		go.transform.parent = transform;
-		go.transform.localPosition = new Vector3(0, 0.1f, 0);
+		this._materialGO = Instantiate(prefab);
+		this._materialGO.transform.parent = transform;
+		this._materialGO.transform.localPosition = new Vector3(0, 0.1f, 0);
 
-		materialType = go.GetComponent<CellMaterial>();
+		materialType = this._materialGO.GetComponent<CellMaterial>();
 		materialSet = true;
 	}
 
@@ -144,6 +149,7 @@ public class Cell : MonoBehaviour
 		float tempMass = (rand.Next((int)WorldGenerator.cellMass_min, (int)WorldGenerator.cellMass_max) * 100) / 100f;
 		materialMass = Mathf.Lerp(tempMass, (WorldGenerator.cellMass_min + WorldGenerator.cellMass_max) / 2, 1 - WorldGenerator.Instance.cellMassRandomization);
 		initialMass = materialMass;
+		this.waterMass = this.materialMass * this.materialType.moisture;
 	}
 
 	public void SetTemperature(float temp) {
@@ -478,9 +484,9 @@ public class Cell : MonoBehaviour
 		Debug.LogFormat("Pos: {0} {1} Temp: {2} Mass: {3} WaterMass: {4}",this.x,this.y,currentTemperature,this.materialMass,this.waterMass);
 	}
 
-	public void Selection(bool selected) {
+	public void Selection(bool selected) 
+	{
 		selectRenderer.enabled = selected;
-		IsSelected = selected;
 	}
 	#endregion
 }

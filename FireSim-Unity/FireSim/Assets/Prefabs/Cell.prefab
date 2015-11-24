@@ -362,6 +362,9 @@ MonoBehaviour:
   materialMass: 0
   waterMass: 0
   cellSize: 0
+  fireParticles: {fileID: 19878322}
+  visualizerRenderer: {fileID: 2327292}
+  selectRenderer: {fileID: 2301184}
 --- !u!198 &19848284
 ParticleSystem:
   m_ObjectHideFlags: 1

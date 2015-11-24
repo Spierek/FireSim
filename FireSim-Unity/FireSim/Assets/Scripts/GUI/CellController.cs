@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CellController : MonoBehaviour
 {
@@ -41,8 +42,13 @@ public class CellController : MonoBehaviour
 	[SerializeField]
 	private Text _cellMoistureLabel = null;
 
+	[SerializeField]
+	private Dropdown _cellMaterialDropdown = null;
+
 	private float _lastCellMassSliderValue = 0.0f;
 	private float _lastCellMoistureValue = 0.0f;
+
+	private int _currentMaterialIndex = -1;
 
 	#endregion Variables
 
@@ -106,7 +112,7 @@ public class CellController : MonoBehaviour
 		{
 			if(this.SelectedCell != null)
 			{
-				this.SelectedCell.Selection(false);
+				this.SelectedCell.IsSelected = false;
 			}
 
 			RaycastHit hit;
@@ -117,8 +123,7 @@ public class CellController : MonoBehaviour
 				
 				if(this.SelectedCell != null)
 				{
-					this.SelectedCell.Selection(true);
-
+					this.SelectedCell.IsSelected = true;
 				}
 			}else{
 				this.SelectedCell = null;
@@ -155,6 +160,25 @@ public class CellController : MonoBehaviour
 			this._lastCellMassSliderValue = massSliderValue;
 			this._cellMassSlider.value = massSliderValue;
 			SetMassLabel(this._selectedCell.materialMass);
+
+			List<Dropdown.OptionData> tmpOptions = this._cellMaterialDropdown.options;
+			tmpOptions.Clear();
+			List<GameObject> tmpMaterials = WorldGenerator._instance.materialPrefabs;
+			int count = tmpMaterials.Count;
+			for(int i = 0;i < count;++i)
+			{
+				tmpOptions.Add(new Dropdown.OptionData(tmpMaterials[i].name));
+				if(tmpMaterials[i].name == this._selectedCell.materialType.gameObject.name)
+				{
+					this._currentMaterialIndex = i;
+				}
+			}
+			this._cellMaterialDropdown.options = tmpOptions;
+
+			this._cellMaterialDropdown.value = this._currentMaterialIndex;
+
+			this._cellMaterialDropdown.onValueChanged.RemoveAllListeners();
+			this._cellMaterialDropdown.onValueChanged.AddListener(this.OnIndexChanged);
 		}
 	}
 
@@ -172,6 +196,16 @@ public class CellController : MonoBehaviour
 		{
 			this.SelectedCell.Ignite();
 			
+		}
+	}
+
+	private void OnIndexChanged(int index)
+	{
+		if(this._selectedCell != null)
+		{
+			this.SelectedCell.SetMaterial(WorldGenerator._instance.materialPrefabs[index]);
+			this.SelectedCell.SetValues(new System.Random());
+			this._currentMaterialIndex = index;
 		}
 	}
 
