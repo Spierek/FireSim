@@ -40,12 +40,20 @@ public class GUIGlobalsPanel : MonoBehaviour
 	[SerializeField]
 	private MeshRenderer _windDirectionArrowMeshRenderer = null;
 
+	[SerializeField]
+	private Slider _worldSizeSlider = null;
+	[SerializeField]
+	private Text _worldSizeLabel = null;
+
 	private float _windDirectionArrowMaxAlpha = 0.4f;
 	private float _windDirectionArrowTimeToFadeOut = 1.0f;
 	private float _windDirectionArrowTimer = 0.0f;
 
 	private float _lastRealTime = 0.0f;
 	private float _realDeltaTime = 0.0f;
+
+	private int _currentWorldSize = 0;
+	private int _lastWorldSize = 0;
 
 	[Header("Selectable spawn")]
 	private float toggleLocalInitialY = -20.0f;
@@ -116,6 +124,25 @@ public class GUIGlobalsPanel : MonoBehaviour
 			if (_currentSeedLabel != null) {
 				_currentSeedLabel.text = WorldGenerator.Instance.currentSeed.ToString();
 			}
+
+			if (this._worldSizeSlider != null)
+			{
+				int worldSizeValue = this._currentWorldGenerator.sizeX;
+
+				this._worldSizeSlider.wholeNumbers = true;
+				this._worldSizeSlider.minValue = WorldGenerator.worldSize_min;
+				this._worldSizeSlider.maxValue = WorldGenerator.worldSize_max;
+				
+				this._worldSizeSlider.value = worldSizeValue;
+				
+				this._currentWorldSize = this._currentWorldGenerator.sizeX;
+				this._lastWorldSize = this._currentWorldGenerator.sizeX;
+
+				if (this._worldSizeLabel != null)
+				{
+					SetWorldSizeLabel(this._currentWorldSize);
+				}
+			}
 		}
 
 		InitializeSelectableToggle();
@@ -126,6 +153,7 @@ public class GUIGlobalsPanel : MonoBehaviour
 		this.ProcesWorldTemperature();
 		this.ProcesWind();
 		this.ProcesWindDirectionArrow();
+		this.ProcessWorldSize();
 	}
 
 	#endregion MonobehaviourMethods
@@ -224,6 +252,20 @@ public class GUIGlobalsPanel : MonoBehaviour
 		}
 	}
 
+	private void ProcessWorldSize()
+	{
+		if (this._worldSizeSlider != null && this._currentWorldGenerator != null)
+		{
+			this._currentWorldSize = (int)this._worldSizeSlider.value;
+			if (this._currentWorldSize != this._lastWorldSize)
+			{
+				this._currentWorldGenerator.SetNewWorldSize(this._currentWorldSize, this._currentWorldSize);
+				this.SetWorldSizeLabel(this._currentWorldSize);
+			}
+			this._lastWorldSize = this._currentWorldSize;
+		}
+	}
+
 	private void SetWorldTemperatureLabel(float val) {
 		val = Mathf.Round(val * 10) / 10f;
 		_worldTemperatureLabel.text = val + "°C";
@@ -237,6 +279,11 @@ public class GUIGlobalsPanel : MonoBehaviour
 	private void SetWindSpeedLabel(float val) {
 		val = Mathf.Round(val * 10) / 10f;
 		_worldWindSpeedLabel.text = val + "km/h";
+	}
+
+	private void SetWorldSizeLabel(int value)
+	{
+		this._worldSizeLabel.text = value + "Cells";
 	}
 
 	private void InitializeSelectableToggle()

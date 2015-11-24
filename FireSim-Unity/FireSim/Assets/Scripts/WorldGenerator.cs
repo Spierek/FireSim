@@ -31,6 +31,9 @@ public class WorldGenerator : MonoBehaviour
 
 	public const float stefan_boltzman_coefficient = 5.67f * 0.00000001f;
 
+	public const int worldSize_min = 10;
+	public const int worldSize_max = 20;
+
 	[Header("Prefabs")]
 	public GameObject			cellPrefab;
 	public List<GameObject>		materialPrefabs = new List<GameObject>();
@@ -38,7 +41,13 @@ public class WorldGenerator : MonoBehaviour
 	[Header("World Params")]
 	public int			currentSeed = 12345;
 	public int			sizeX;
+	[HideInInspector]
+	[System.NonSerialized]
 	public int			sizeY;
+
+	private int nextWorldSizeX;
+	private int nextWorldSizeY;
+
 	public float		yOffsetJitter = 0.1f;
 	[Range(1, 10)]
 	public float		cellSize = 1;
@@ -66,6 +75,9 @@ public class WorldGenerator : MonoBehaviour
 	#region Monobehaviour
 	void Awake () 
 	{
+		this.sizeY = sizeX;
+		SetNewWorldSize(this.sizeX, this.sizeY);
+
 		WorldGenerator._instance = this;
 		if( (this.selectableSpawn != null && this.selectableSpawn.Length != this.materialPrefabs.Count) || this.selectableSpawn == null )
 		{
@@ -107,6 +119,9 @@ public class WorldGenerator : MonoBehaviour
 		System.Random rand;
 		WangDoubleHash hashObject = new WangDoubleHash(currentSeed);
 		float height;
+
+		this.sizeX = this.nextWorldSizeX;
+		this.sizeY = this.nextWorldSizeY;
 
 		for (int y = 0; y < sizeY; ++y) 
 		{
@@ -162,6 +177,12 @@ public class WorldGenerator : MonoBehaviour
 	public void UpdateWindDirection(Vector3 newWindDirectionVector)
 	{
 		this._windDirectionVector = newWindDirectionVector;
+	}
+
+	public void SetNewWorldSize(int sizeX, int sizeY)
+	{
+		this.nextWorldSizeX = sizeX;
+		this.nextWorldSizeY = sizeY;
 	}
 
 	//void OnDrawGizmos()
