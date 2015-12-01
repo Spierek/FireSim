@@ -9,7 +9,7 @@ public class CellMaterial : MonoBehaviour
 	public const float specificHeat_water = 4200.0f;
 	public const float vaporizationHeat = 2257.0f;
 	public const float vaporizationTemperature = 100.0f;
-	public const float maxCellTemperature = 3000.0f;
+	public const float maxCellTemperature = 2000.0f;
 
 	#endregion Constants
 

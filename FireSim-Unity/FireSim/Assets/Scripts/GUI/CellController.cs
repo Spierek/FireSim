@@ -141,13 +141,9 @@ public class CellController : MonoBehaviour
 			}
 
 			//stuff
-			float massSliderValue = this._cellMassSlider.value;
-			if(massSliderValue != this._lastCellMassSliderValue)
-			{
-				this._selectedCell.materialMass = massSliderValue * WorldGenerator.cellMass_max;
-				SetMassLabel(this._selectedCell.materialMass);
-			}
-			this._lastCellMassSliderValue = massSliderValue;
+			float massSliderValue = this._selectedCell.materialMass / WorldGenerator.cellMass_max;
+			this._cellMassSlider.value = massSliderValue;
+			SetMassLabel(this._selectedCell.materialMass);
 		}
 		this._lastSelectedCell = this._selectedCell;
 	}
@@ -186,7 +182,7 @@ public class CellController : MonoBehaviour
 	{
 		if(this._cellMassLabel != null)
 		{
-			this._cellMassLabel.text = mass + "kg";
+			this._cellMassLabel.text = (Mathf.Floor(mass * 10.0f) / 10.0f).ToString() + "kg";
 		}
 	}
 
@@ -206,6 +202,16 @@ public class CellController : MonoBehaviour
 			this.SelectedCell.SetMaterial(WorldGenerator._instance.materialPrefabs[index]);
 			this.SelectedCell.SetValues(new System.Random());
 			this._currentMaterialIndex = index;
+		}
+	}
+
+	public void OnMassValueChanged(float value)
+	{
+		if(this._selectedCell != null)
+		{
+			float materialMass = this._cellMassSlider.value * WorldGenerator.cellMass_max;
+			this._selectedCell.materialMass = materialMass;
+			SetMassLabel(this._selectedCell.materialMass);
 		}
 	}
 

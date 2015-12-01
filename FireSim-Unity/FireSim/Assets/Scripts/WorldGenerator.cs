@@ -35,7 +35,7 @@ public class WorldGenerator : MonoBehaviour
 	public const float cellMass_max = 100.0f;
 
 	public const float cellMoisture_min = 0.0f;
-	public const float cellMoisture_max = 100.0f;
+	public const float cellMoisture_max = 60.0f;
 
 	public const int worldSize_min = 10;
 	public const int worldSize_max = 20;

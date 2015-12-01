@@ -176,6 +176,11 @@ public class GUIGlobalsPanel : MonoBehaviour
 		this.ProcesWindDirectionArrow();
 		this.ProcessWorldSize();
 		this.ProcessCellMass();
+
+		if(Input.GetKey(KeyCode.Escape))
+		{
+			Application.Quit();
+		}
 	}
 
 	#endregion MonobehaviourMethods
